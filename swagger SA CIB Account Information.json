@@ -1,0 +1,386 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "http://api.investec.com",
+      "description": "",
+      "variables": {}
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "SA CIB Account Information",
+    "description": "The CIB account information API allows Investec SA Corporate and institutional clients to access their account and transactional information (read-only) via an API.  \n  \nIt can be used to retrieve account information such as:\n\n*   Account and balance details\n*   Account transactions\n    \n\nThere are many possible use cases for the Account Information API: from extracting the data to aggregate it with financial data from other banking institutions to personal money management tools.  \n\n**Release Notes**\n\n 2023-06-21\n\n* **Enhancement**: Added a sandbox environment \n\n    \n# Sandbox\n\nTo use the sandbox environment use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. \n\n Authenticating: \n* **Auth URL (POST):** `https://openapisandbox.investec.com/identity/v2/oauth2/token` \n* **header**  `Authorization: Basic QXVQd2poU3k3a2FVd2djaDJJc0xGR1FPRUV4QVppaDU6N3ljWVhLYWtHZDZBU002Zg==`  \n* **header**  `x-api-key: QXVQd2poU3k3a2FVd2djaDJJc0xGR1FPRUV4QVppaDU6YVc1MlpYTjBaV010ZW1FdFkybGlMV0ZqWTI5MWJuUnpMWE5oYm1SaWIzZz0=` \n* **header** `Content-Type: application/x-www-form-urlencoded` \n* **data-urlencode** `grant_type=client_credentials` \n\n The basic authorization header are as follows ( *clientId:* `AuPwjhSy7kaUwgch2IsLFGQOEExAZih5` *secret:* `7ycYXKakGd6ASM6f` ) Eg. Base64-encode ( {clientId}:{secret} )\n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "termsOfService": "https://developer.investec.com/za/terms-of-use",
+    "contact": {}
+  },
+  "paths": {
+    "/za/bb/v1/accounts": {
+      "get": {
+        "summary": "Get Accounts",
+        "description": "Obtain a list of accounts with balances in associated profile.",
+        "operationId": "Accounts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The requested operation was successfully completed",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "accounts": [
+                      {
+                        "AccountHolderAddress": {
+                          "AddressLine1": "",
+                          "AddressLine2": "",
+                          "City": "",
+                          "Country": "",
+                          "CountryCode": ""
+                        },
+                        "RoutingBIC": "",
+                        "BankAccountProductType": "",
+                        "CreditLastCycleToNextBusinessDate": "0001-01-01T00:00:00",
+                        "CustomerAccountType": "",
+                        "DebitLastCycleToNextBusinessDate": "0001-01-01T00:00:00",
+                        "DueDateOfPayment": "0001-01-01T00:00:00",
+                        "MinimumAmountLimit": 0,
+                        "NumberOfCardHolders": 0,
+                        "CreditLimit": 0,
+                        "DebitAccountBankName": "",
+                        "PendingTransactions": 0,
+                        "Banks": {
+                          "Name": "Investec South Africa",
+                          "ChipsUID": "",
+                          "Branch": [
+                            {
+                              "Number": ""
+                            }
+                          ],
+                          "PostalAddress": {
+                            "AddressLine1": "100 Grayston drive",
+                            "AddressLine2": "Sandown",
+                            "City": "",
+                            "Country": null
+                          }
+                        },
+                        "Currencies": {
+                          "CurrencyCode": "USD"
+                        },
+                        "InterestDistribution": "",
+                        "NoticesBalance": 0,
+                        "AccountOpenDate": "2021-10-13T07:19:01Z",
+                        "CumulativeNoticesAmount": 0,
+                        "InstantAvailableNoticeBalance": 0,
+                        "MinimimAmountLimit": 0,
+                        "loggedOnUser": {
+                          "UserFirstName": "Jane",
+                          "UserLastName": "Doe",
+                          "UserCompany": "Racing Stripes Test Account FBCC (Pty) Ltd BTB TEST"
+                        },
+                        "NoticeInterestNominated": 0,
+                        "NoticeInterestBank": "",
+                        "noticeInterestAccountName": "",
+                        "NoticeInterestAccount": "",
+                        "PreviousStatementPeriod": "0001-01-01T00:00:00",
+                        "DebitAccountNumber": "",
+                        "DealReference": "",
+                        "AutomaticPaymentOrder": "0.00000",
+                        "BackOfficeCustomerCode": "RACINGSTRIPESPTYCALYPSO",
+                        "AccountId": "4407",
+                        "AccountName": "USD 6566939 Term Deposit Account",
+                        "AccountFullName": "",
+                        "AccountType": "Term Deposit Account",
+                        "AccountTypeId": "5",
+                        "AccountNumber": "6566939",
+                        "AlternativeAccNo": "",
+                        "ElectronicAccountNumber": "",
+                        "Balances": {
+                          "CapitalBalance": 12,
+                          "AvailableBalance": 0,
+                          "PrincipalAmount": 0,
+                          "ValueDate": "2020-06-03T22:00:01Z",
+                          "ClosingBalance": 0,
+                          "PendingCardBalance": 0
+                        },
+                        "BackOfficeType": "",
+                        "Products": {
+                          "StartDate": "0001-01-01T00:00:00",
+                          "EndDate": "0001-01-01T00:00:00",
+                          "OverdraftLimit": 0,
+                          "MaxTransferLimit": 0
+                        },
+                        "Description": "RACING STRIPES (PTY) LIMITED",
+                        "OwnerType": "1",
+                        "Interests": {
+                          "Amount": 0,
+                          "Rate": 0,
+                          "RateMaturity": 0,
+                          "RateCredit": 0.0155,
+                          "RateDebit": 0,
+                          "AccruedCreditInterest": 0,
+                          "AccruedDebitInterest": 0
+                        },
+                        "ActiveFlag": "Y",
+                        "NickName": "RACING STRIPES (PTY) LIMITED",
+                        "CreatedDate": "2021-10-12T22:00:01Z",
+                        "ModifiedDate": "0001-01-01T00:00:00",
+                        "MaturityAmount": 0,
+                        "StatementFrequency": "",
+                        "StatementNumber": "",
+                        "StatementDay": "0",
+                        "StatementMonth": "",
+                        "EmailAddress": "",
+                        "Category": "Invest",
+                        "LinkedAccount": "",
+                        "AccountFormat": "99"
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": "https://openapi.investec.com/za/bb/v1/accounts"
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/text": {
+              "example": "GET https://openapi.investec.com/za/bb/v1/accounts HTTP/1.1 \nAuthorization: Basic e2NsaWVudElkfTp7c2VjcmV0fQ== \nHost: openapi.investec.com \nAccept: application/json \n\n $.ajax({ \n   url: 'https://openapi.investec.com/za/bb/v1/accounts',\n   type: 'GET', \n      headers: {\n      'Authorization': 'Basic e2NsaWVudElkfTp7c2VjcmV0fQ=='\n   },\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    },
+    "/za/bb/v1/accounts/{accountId}/transactions?fromDate={fromDate}&toDate={toDate}&page=1": {
+      "get": {
+        "summary": "Get Account Transactions",
+        "description": "Obtain a specified account's transactions.",
+        "operationId": "AccountsTransactions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountId",
+            "description": "AccountId Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/fromDate"
+          },
+          {
+            "$ref": "#/components/parameters/toDate"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "transactions": [
+                      {
+                        "AccountName": "ZAR 1300206346580 Investec Business Account",
+                        "TransactionCode": "284",
+                        "TransactionStatus": "approved",
+                        "InvestmentDate": "0001-01-01T00:00:00",
+                        "InvestmentName": null,
+                        "InvestmentStatus": null,
+                        "RemainingTerm": null,
+                        "InvestmentAmount": null,
+                        "StatementId": "51599",
+                        "InstantAccessBalance": null,
+                        "BranchCode": null,
+                        "AccountNumber": null,
+                        "DistributionAccount": null,
+                        "AccountType": null,
+                        "PostDate": "0001-01-01T00:00:00",
+                        "Interest": null,
+                        "AccruedInterest": null,
+                        "MaturityDate": "0001-01-01T00:00:00",
+                        "BankName": null,
+                        "CustomerReferenceId": "",
+                        "BackOfficeReferenceId": "",
+                        "CardNumber": "Internal-Live",
+                        "TransactionId": "202105180000000000284",
+                        "Reference": "INVBUSONLBENEFRENSD",
+                        "Beneficiaries": {
+                          "LinkList": null,
+                          "Entities": {
+                            "EntityName": "Internal Transaction DETAIL - 40005030601"
+                          }
+                        },
+                        "Description": "Internal Transaction",
+                        "Accounts": {
+                          "AccountId": 73,
+                          "AccountNumber": "1300206346580"
+                        },
+                        "Currencies": {
+                          "CurrencyCode": "ZAR"
+                        },
+                        "CaptureDate": "2021-05-17T22:00:01Z",
+                        "ValueDate": "2021-05-17T22:00:01Z",
+                        "CardHolderName": "INVBUSONLBENEFRENSD",
+                        "AutoForwardProcessingDate": false,
+                        "Amount": 5000,
+                        "Reference_1": "PMC Inbounds",
+                        "Reference_2": "",
+                        "Reference_3": "DETAIL - 40005030601",
+                        "Reference_4": null,
+                        "Reference_5": null,
+                        "Reference_8": "614",
+                        "Reference_9": "BENEFRENSD",
+                        "Reference_10": "",
+                        "RunningBalance": 5445059.76
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": "https://openapi.investec.com/za/bb/v1/accounts/{accountId}/transactions?fromDate={fromDate}&toDate={toDate}&page={page}"
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/text": {
+              "example": "GET https://openapi.investec.com/za/bb/v1/accounts/{accountId}/transactions?fromDate={fromDate}&toDate={toDate}&page={page} HTTP/1.1 \nAuthorization: Basic e2NsaWVudElkfTp7c2VjcmV0fQ== \nHost: openapi.investec.com \nAccept: application/json \n\n $.ajax({ \n   url: 'https://openapi.investec.com/za/bb/v1/accounts/{accountId}/transactions?fromDate={fromDate}&toDate={toDate}&page={page}',\n   type: 'GET', \n      headers: {\n      'Authorization': 'Basic e2NsaWVudElkfTp7c2VjcmV0fQ=='\n   },\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "parameters": {
+      "x-api-key": {
+        "name": "x-api-key",
+        "in": "header",
+        "required": true,
+        "style": "simple",
+        "schema": {
+          "type": "string",
+          "example": "{{x-api-key}}"
+        }
+      },
+      "fromDate": {
+        "name": "fromDate",
+        "description": "Refers to the date range filter's start date. Will default to today's date, minus 180 days, if not specified.",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "2021-05-01"
+        }
+      },
+      "toDate": {
+        "name": "toDate",
+        "description": "Refers to the date range filter's end date. Will default to today's date if not specified.",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "2021-06-01"
+        }
+      },
+      "page": {
+        "name": "page",
+        "description": "Refers to the page number.",
+        "in": "query",
+        "required": false,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "schemas": {
+      "MetaData": {
+        "description": "Meta Data relevant to the payload",
+        "type": "object",
+        "properties": {
+          "TotalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        }
+      },
+      "Links": {
+        "description": "Links relevant to the payload",
+        "required": [
+          "Self"
+        ],
+        "type": "object",
+        "properties": {
+          "Self": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "tags": [],
+  "externalDocs": {
+    "url": "",
+    "description": ""
+  }
+}

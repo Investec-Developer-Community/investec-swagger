@@ -1,0 +1,392 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "http://api.investec.com",
+      "description": "",
+      "variables": {}
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "Open API - Authorization / 3-Legged OAuth",
+    "description": "The Account Information and Programmable Card API endpoints are protected by the OAuth 2.0 Authorization Framework: \n [https://tools.ietf.org/html/rfc6749](https://tools.ietf.org/html/rfc6749)  \n\n\n **Supported Grant Type(s)** \n\n * client_credentials \n\n\n **Supported Scope(s)** \n* accounts \n* transactions \n\n\n **Enrolment** \n In order to obtain you OAuth credentials, simply: \n 1. Login to [Investec Online](https://login.secure.investec.com/). \n 2. Navigate to the **Programmable Banking** landing page. \n 3. Select the **Open API** tab. \n 4. Select the **Enroll** button.",
+    "termsOfService": "https://developerbeta.investec.com/za/terms-of-use",
+    "contact": {}
+  },
+  "paths": {
+    "/identity/v2/oauth2/token": {
+      "post": {
+        "tags": [
+          "Open API - Authorization"
+        ],
+        "summary": "Get Access Token",
+        "description": "As a client I want to obtain a bearer token so that I can create an intent",
+        "operationId": "GetAccessToken",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/x-api-key"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200"
+                },
+                "example": {
+                  "access_token": "abcdefghijklmnopqrstuv",
+                  "token_type": "Bearer",
+                  "expires_in": 1799,
+                  "scope": "accounts"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "description": "As a TPP I want to obtain a bearer token so that I can create an intent",
+          "required": true,
+          "content": {
+            "application/text": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "grant_type"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "description": "Example: <span class='sc-fbIWvP sc-hmbstg JIFSj eqivia'>client_credentials</span>"
+                  }
+                }
+              },
+              "example": "POST https://openapi.investec.com/identity/v2/oauth2/token HTTP/1.1 \nAuthorization: Basic abcdefghijklmnopqrstuv== \nHost: openapi.investec.com \nContent-Type: application/x-www-form-urlencoded\nAccept: application/json \nx-api-key: abcdefghijklmnopqrstuv=='  \ndata-urlencode 'grant_type=client_credentials' \n\n $.ajax({ \n   url: 'https://openapi.investec.com/identity/v2/oauth2/token',\n   type: 'POST', \n   contentType: 'application/x-www-form-urlencoded',\n   data: 'grant_type=client_credentials',\n   headers: {\n      'Authorization': 'Basic abcdefghijklmnopqrstuv=='\n      'x-api-key': 'abcdefghijklmnopqrstuv=='\n   },\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    },
+    "/identity/v2/oauth2/authorize?scope={scope}&client_id={client_id}&redirect_uri={redirect_uri}&response_type=code": {
+      "get": {
+        "tags": [
+          "3 Legged OAuth"
+        ],
+        "summary": "Client Authorize redirect",
+        "description": "As a 3rd party I want to be redirected to the Investec consent screen",
+        "operationId": "ClientAuthorizeRedirect",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/scope"
+          },
+          {
+            "$ref": "#/components/parameters/client_id"
+          },
+          {
+            "$ref": "#/components/parameters/redirect_uri"
+          },
+          {
+            "$ref": "#/components/parameters/response_type"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Auth",
+            "content": {
+              "header": {
+                "schema": {
+                  "$ref": "#/components/schemas/302"
+                },
+                "example": {
+                  "Location": "https://loginstg.secure.investec.com/usrroot/login/form?ZGVzdKdiuUb24=abcdefghijklmnopqrstuv=="
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "description": "As a TPP I want to obtain a bearer token so that I can create an intent",
+          "required": true,
+          "content": {
+            "application/text": {
+              "example": "GET https://openapi.investec.com/identity/v2/oauth2/authorize?scope={scope}&client_id={client_id}&redirect_uri={redirect_uri}&response_type=code HTTP/1.1 \nHost: openapi.investec.com \nContent-Type: application/x-www-form-urlencoded\nAccept: application/json \n\n $.ajax({ \n   url: 'https://openapi.investec.com/identity/v2/oauth2/authorize?scope={scope}&client_id={client_id}&redirect_uri={redirect_uri}&response_type=code',\n   type: 'GET', \n   contentType: 'application/x-www-form-urlencoded',\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    },
+    "/identity/v2/oauth2/token ": {
+      "post": {
+        "tags": [
+          "3 Legged OAuth"
+        ],
+        "summary": "Generate Access Token",
+        "description": "As a 3rd party I want to obtain a bearer token so that I can create an intent",
+        "operationId": "GenerateAccessToken",
+        "responses": {
+          "200": {
+            "description": "Auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200R"
+                },
+                "example": {
+                  "access_token": "abcdefghijklmnopqrstuv",
+                  "token_type": "Bearer",
+                  "expires_in": 1799,
+                  "scope": "accounts",
+                  "refresh_token": "abcdefghijklmnopqrstuv"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/text": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "AccountId"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "default": "authorization_code"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "Example: <span class='sc-fbIWvP sc-hmbstg JIFSj eqivia'>abcdefghijklmnopqrstuv</span>"
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "Example: <span class='sc-fbIWvP sc-hmbstg JIFSj eqivia'>https://app.redirect.co.za</span>"
+                  }
+                }
+              },
+              "example": "POST https://openapi.investec.com/identity/v2/oauth2/token HTTP/1.1 \nAuthorization: Basic abcdefghijklmnopqrstuv== \nHost: openapi.investec.com \nContent-Type: application/x-www-form-urlencoded\nAccept: application/json \ndata-urlencode 'grant_type=authorization_code' \ndata-urlencode 'code=abcdefghijklmnopqrstuv' \ndata-urlencode 'redirect_uri=https://app.redirect.co.za' \n\n $.ajax({ \n   url: 'https://openapi.investec.com/identity/v2/oauth2/token',\n   type: 'POST', \n   contentType: 'application/x-www-form-urlencoded',\n   data: 'grant_type=authorization_code code=abcdefghijklmnopqrstuv redirect_uri=https://app.redirect.co.za',\n   headers: {\n      'Authorization': 'Basic abcdefghijklmnopqrstuv=='\n   },\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    },
+    "/identity/v2/oauth2/token  ": {
+      "post": {
+        "tags": [
+          "3 Legged OAuth"
+        ],
+        "summary": "Refresh Access Token",
+        "description": "As a 3rd party I want to refresh a bearer token so that I can create an intent",
+        "operationId": "RefreshAccessToken",
+        "responses": {
+          "200": {
+            "description": "Auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/200R"
+                },
+                "example": {
+                  "access_token": "abcdefghijklmnopqrstuv",
+                  "token_type": "Bearer",
+                  "expires_in": 1799,
+                  "scope": "accounts",
+                  "refresh_token": "abcdefghijklmnopqrstuv"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/text": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "AccountId"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "default": "refresh_token"
+                  },
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "Example: <span class='sc-fbIWvP sc-hmbstg JIFSj eqivia'>abcdefghijklmnopqrstuv</span>"
+                  }
+                }
+              },
+              "example": "POST https://openapi.investec.com/identity/v2/oauth2/token HTTP/1.1 \nAuthorization: Basic abcdefghijklmnopqrstuv== \nHost: openapi.investec.com \nContent-Type: application/x-www-form-urlencoded\nAccept: application/json \ndata-urlencode 'grant_type=refresh_token' \ndata-urlencode 'refresh_token=abcdefghijklmnopqrstuv' \n\n $.ajax({ \n   url: 'https://openapi.investec.com/identity/v2/oauth2/token',\n   type: 'POST', \n   contentType: 'application/x-www-form-urlencoded',\n   data: 'grant_type=refresh_token refresh_token=abcdefghijklmnopqrstuv ',\n   headers: {\n      'Authorization': 'Basic abcdefghijklmnopqrstuv=='\n   },\n   success: function (result) {\n       console.log(JSON.stringify(result));\n   }\n});"
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "x-api-key": {
+        "name": "x-api-key",
+        "in": "header",
+        "required": true,
+        "style": "simple",
+        "schema": {
+          "type": "string",
+          "example": "abcdefghijklmnopqrstuv=="
+        }
+      },
+      "scope": {
+        "name": "scope",
+        "in": "query",
+        "required": true,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "accounts transactions"
+        }
+      },
+      "client_id": {
+        "name": "client_id",
+        "in": "query",
+        "required": true,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "abcdefghijklmnopqrstuv"
+        }
+      },
+      "redirect_uri": {
+        "name": "redirect_uri",
+        "in": "query",
+        "required": true,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "https://app.redirect.co.za"
+        }
+      },
+      "response_type": {
+        "name": "response_type",
+        "in": "query",
+        "required": true,
+        "style": "form",
+        "schema": {
+          "type": "string",
+          "example": "code"
+        }
+      }
+    },
+    "schemas": {
+      "200": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "",
+            "default": "abcdefghijklmnopqrstuv"
+          },
+          "token_type": {
+            "type": "string",
+            "description": "",
+            "default": "Bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "",
+            "default": 1799
+          },
+          "scope": {
+            "type": "string",
+            "description": "",
+            "default": "accounts"
+          }
+        }
+      },
+      "302": {
+        "type": "object",
+        "properties": {
+          "Location": {
+            "type": "string",
+            "description": "https://loginstg.secure.investec.com/usrroot/login/form?ZGVzdKdiuUb24=abcdefghijklmnopqrstuv=="
+          }
+        }
+      },
+      "200R": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "",
+            "default": "abcdefghijklmnopqrstuv"
+          },
+          "token_type": {
+            "type": "string",
+            "description": "",
+            "default": "Bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "",
+            "default": 1799
+          },
+          "scope": {
+            "type": "string",
+            "description": "",
+            "default": "accounts"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "",
+            "default": "abcdefghijklmnopqrstuv"
+          }
+        }
+      }
+    }
+  },
+  "tags": [],
+  "externalDocs": {
+    "url": "",
+    "description": ""
+  }
+}

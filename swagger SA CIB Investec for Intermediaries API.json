@@ -1,0 +1,5605 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SA CIB Investec for Intermediaries API",
+    "description": "# Introduction\n The CIB Investec for Intermediaries API allows Investec SA Corporate and Institutional Banking Intermediaries clients access to their intermediaries, and client data via an API.\n \nIt can be used to retrieve data such as:\n \n*   Accounts details, balances, and transactions\n*   Banks data \n*   Categories \n*  Client details \n*  Forex \n* Intermediary details \n* Introducers \n \n There are many possible use-cases for the Intermediaries API and it is open to Investec clients to build their own experiences.\n ## Getting started \n Decide which authentication route you will follow for your integration:\n * **3 Legged OAuth**: submit api requests in the context of an authorised user \n * **OAuth 2**: submit request in the context of your api key and secret. \n \n To start using the Investec for Intermediaries API, you'll need API credentials; for 3 Legged OAuth we request that you reach out to us, and for OAuth 2 you can setup using your [Investec Online Profile](https://login.secure.investec.com/). Create a new API key (x-api-key) with the scopes you want it to access. \n \n Optionally, use the [OAuth-2 - Sandbox](#section/Authentication/OAuth-2-Sandbox) account and credentials to generate mock responses to test your applications. You can use the Sandbox account without the need to open an Investec account. \n ## Making a request\n All requests must be made in the context of an active intermediary. To get an intermediaryId execute the [Get Intermediaries](#tag/Intermediaries/operation/GetLinkedProfiles) endpoint first then submit your subsequent calls with the `intermediaryId` as a header parameter. \n # Authentication\n The Investec For Intermediaries API supports both 3 Legged OAuth as well as OAuth 2. For making authenticated requests on behalf of your users we recommend using 3 Legged OAuth. For system-to-system integration we recommend the OAuth-2 flow.\n \n ## 3 Legged OAuth\n Follow instructions here `https://developer.investec.com/za/api-products/documentation/SA_Open_API_-_Authorization#tag/3-Legged-OAuth`\n\n ## OAuth-2\n Follow instructions here `https://developer.investec.com/za/api-products/documentation/SA_Open_API_-_Authorization` \n \n## OAuth-2 - Sandbox\n\nTo use the sandbox environment use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. \n\n Authenticating: \n\n * **Auth URL(POST)**: `https://openapisandbox.investec.com/identity/v2/oauth2/token` \n * **header**: `Authorization: Basic M1NXdkhBM3FYbW5BMjVXQXVhS0dnejBPdTRicVdmck46RlVJSzBBWmlJV05mZkdHbw==` \n * **header**: `x-api-key: M1NXdkhBM3FYbW5BMjVXQXVhS0dnejBPdTRicVdmck46YVc1MlpYTjBaV010ZW1FdGFXWnBMV0ZqWTI5MWJuUnpMV2x1ZG1WemRHVmpNMnh2WVMxellXNWtZbTk0` \n * **header**: `Content-Type: application/x-www-form-urlencoded` \n * **data-urlencode**: `grant_type=client_credentials`  \n\nThe basic authorization header and x-api-key are as follows: \n\n *clientId:* `3SWvHA3qXmnA25WAuaKGgz0Ou4bqWfrN` \n\n *secret:* `FUIK0AZiIWNffGGo` ) \n\n Eg. Base64-encode ( {clientId}:{secret} )\n\n # Release Notes\n\n 2024-10-01\n\n* **Release**: Added forex capabilities\n\n 2023-04-04\n\n* **Release**: First release\n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "version": "1.0",
+    "termsOfService": "https://developer.investec.com/za/terms-of-use"
+  },
+  "servers": [
+    {
+      "url": "https://openapi.investec.com"
+    }
+  ],
+  "paths": {
+    "/za/ifi/v1/accounts/{accountNumber}/pending-transactions": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Gets pending transactions",
+        "description": "Returns a list of pending transactions for the parameterised account number.",
+        "operationId": "GetPendingTransactions",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pendingTransactionsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/{accountNumber}/transactions": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get transactions",
+        "description": "Returns a list of transactions for the parameterised account number. If no date range is provided the endpoint returns transactions data for the last 7 days.",
+        "operationId": "GetTransactionsHistory",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "start-date",
+            "in": "query",
+            "description": "dd-MM-yyyy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "end-date",
+            "in": "query",
+            "description": "dd-MM-yyyy",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "asc/desc",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transactionsHistoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/balance": {
+      "post": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Gets account balances",
+        "description": "Returns a list of account balances for the posted account numbers.",
+        "operationId": "GetAccountBalance",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/accountBalanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/accountBalanceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/intermediary": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get intermediary accounts",
+        "description": "Returns the Main and Income account for the parameterised intermediaryId.",
+        "operationId": "GetIntermedairyAccounts",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getIntermediaryAccountsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/intermediary/clients/{accountStatus}": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get client accounts",
+        "description": "Returns a list of client account details for the parameterised account status and intermediaryId.",
+        "operationId": "GetUnderlyingAccounts",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountStatus",
+            "in": "path",
+            "description": "Must be 'Open' or 'Closed'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pagedAccountsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/book-value": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get book value",
+        "description": "Returns the book value for each currency.",
+        "operationId": "GetTotalBookValues",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/bookValuesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/{accountNumber}/account-details": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get account details",
+        "description": "Returns the account details for the parameterised account number.",
+        "operationId": "GetAccountDetails",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAccountDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/summary/{accountStatus}/search/{keyword}": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Search accounts",
+        "description": "Returns a list of accounts for that contain the parameterised keyword.",
+        "operationId": "GetAccountsSearch",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountStatus",
+            "in": "path",
+            "description": "'Open' => OPEN Accounts | 'Closed' => CLOSED Accounts",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pagedAccountsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/accounts/{accountType}": {
+      "get": {
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Get accounts by type",
+        "description": "Returns accounts for the parameterised account type.",
+        "operationId": "GetPaymentAccountsByIntermediary",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountType",
+            "in": "path",
+            "description": "Must be 'beneficiary-payment', 'ad-hoc-payment', 'scheduled-payment' or 'interest-instruction'",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Search filter keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category-id",
+            "in": "query",
+            "description": "Category-id filter key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getPaymentAccountsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/banks": {
+      "get": {
+        "tags": [
+          "Banks"
+        ],
+        "summary": "Gets banks",
+        "description": "Gets list of banks.",
+        "operationId": "GetBanks",
+        "parameters": [
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Can be either asc or desc",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getBanksResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/intermediaries/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get categories",
+        "description": "Returns a list of categories for the parameterised intermediaryId.",
+        "operationId": "GetCategories",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Post category",
+        "description": "Creates a new category for the parameterised intermediaryId and categoryId.",
+        "operationId": "CreateCategory",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/olbCreateCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      },
+      "patch": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Patch category",
+        "description": "Patch an existing category for the parameterised intermediaryId and categoryId.",
+        "operationId": "AmendCategory",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/olbAmendCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/amendCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/intermediaries/categories/{categoryId}": {
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete category",
+        "description": "Deletes a category using the parameterised category Id for the parameterised intermediaryId.",
+        "operationId": "DeleteCategory",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleteCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/intermediaries/categories/default/{categoryId}": {
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Post category",
+        "description": "Sets the parameterised categoryId as the intermediary default category for the parameterised intermediaryId.",
+        "operationId": "SetDefaultCategory",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/setDefaultCategoriesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/clients/accounts/{accountNumber}/client-detail": {
+      "get": {
+        "tags": [
+          "Client Details"
+        ],
+        "summary": "Get client by account number",
+        "description": "Returns the client details for the parameterised account number.",
+        "operationId": "GetClientDetailsByAccountNumber",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/clientDetailsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/clients/client-dashboard/{searchKeyword}": {
+      "get": {
+        "tags": [
+          "Client Details"
+        ],
+        "summary": "Search clients",
+        "description": "Returns a list of clients for the parameterised search keyword.",
+        "operationId": "ClientDashboardSearch",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchKeyword",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/clientDashboardSearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/quote": {
+      "post": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Generates a quote",
+        "description": "Submits a request to generate a quote",
+        "operationId": "SubmitRateQuoteRequest",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/quoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/submitRateQuoteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/trade": {
+      "post": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Submit trade request",
+        "description": "Submits the trade request",
+        "operationId": "SubmitTradeRequest",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/submitTradeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/submitTradeRequestResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/trades": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Get all trades",
+        "description": "Get all trades",
+        "operationId": "GetTrades",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "YYYY-MM-DD - Must be greater than less than today's date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "YYYY-MM-DD - Must be greater than startDate but less than or equals to today's date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Cursor for the next set of results",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tradeReference",
+            "in": "query",
+            "description": "Unique ID for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientRequestId",
+            "in": "query",
+            "description": "Unique client request ID for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tier",
+            "in": "query",
+            "description": "Pricing tier for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "counterparty",
+            "in": "query",
+            "description": "Counterparty that booked that trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyPair",
+            "in": "query",
+            "description": "Currency pair for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenor",
+            "in": "query",
+            "description": "Tenor for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "description": "Side for the trade",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tradeType",
+            "in": "query",
+            "description": "tradeType",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAllTradesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/reference-data/channel-schedules": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Channel schedules",
+        "description": "Provides the channel schedules for a quote/trade",
+        "operationId": "GetChannelSchedules",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyPair",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getChannelSchedulesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/reference-data/currency-pair-schedules": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Currency pair schedules",
+        "description": "Provides the currency pair schedules for a quote/trade",
+        "operationId": "GetCurrencyPairSchedules",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dayType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCurrencyPairSchedulesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/reference-data/enabled-tenors": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Enabled Tenors",
+        "description": "Provides the enabled tenors for a quote/trade",
+        "operationId": "GetEnabledTenors",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getEnabledTenorsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/reference-data/quote-enabled-currency-pairs": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Quote Enabled Currency Pairs",
+        "description": "Provides the quote enabled currency pairs for a quote/trade",
+        "operationId": "GetQuoteEnabledCurrencyPairs",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getQuoteEnabledCurrencyPairsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/fx/reference-data/validation/{currencyPair}": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Settlement Data Validation",
+        "description": "Provides validation on the quote/trade request for a specific owner and currency pair, as well as the earliest settlement date for that request",
+        "operationId": "GetSettlementDataValidation",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currencyPair",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "inputTenorSymbol",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getSettlementDataValidationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "Endpoint Disabled",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/intermediaries": {
+      "get": {
+        "tags": [
+          "Intermediaries"
+        ],
+        "summary": "Get intermediaries",
+        "description": "Returns a list of intermediaries linked to the authorised token.",
+        "operationId": "GetLinkedProfiles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getProfilesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/introducers/summary": {
+      "get": {
+        "tags": [
+          "Introducers"
+        ],
+        "summary": "Get introducers summary",
+        "description": "Returns a summary list of introducers.",
+        "operationId": "GetIntroducersSummary",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Search filter keyword",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Must be 'asc' or 'desc'",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getIntroducersSummaryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/introducers": {
+      "get": {
+        "tags": [
+          "Introducers"
+        ],
+        "summary": "Get Introducers",
+        "description": "Returns a list of introducers.",
+        "operationId": "GetIntroducers",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Must be greater than 0",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page-size",
+            "in": "query",
+            "description": "Min = 10, Max = 100",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Search filter keyword",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getIntroducersResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      },
+      "post": {
+        "tags": [
+          "Introducers"
+        ],
+        "summary": "Post introducer",
+        "description": "Creates a new introducer.",
+        "operationId": "AddIntroducer",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/introducerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postIntroducerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      },
+      "put": {
+        "tags": [
+          "Introducers"
+        ],
+        "summary": "Put introducer",
+        "description": "Updates the parameterised introducer",
+        "operationId": "AmendIntroducer",
+        "parameters": [
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/amendIntroducerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/putIntroducerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/za/ifi/v1/introducers/{introducerId}": {
+      "delete": {
+        "tags": [
+          "Introducers"
+        ],
+        "summary": "Delete introducer",
+        "description": "Deletes the parameterised introducer.",
+        "operationId": "DeleteIntroducer",
+        "parameters": [
+          {
+            "name": "introducerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "intermediaryId",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleteIntroducerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "links": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "string"
+          },
+          "first": {
+            "type": "string"
+          },
+          "last": {
+            "type": "string"
+          },
+          "prev": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          }
+        }
+      },
+      "meta": {
+        "type": "object",
+        "properties": {
+          "dataVersion": {
+            "type": "string"
+          },
+          "pageNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "cursorMeta": {
+        "type": "object",
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/cursorMetaRequest"
+          },
+          "responseCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/cursorPagination"
+          }
+        }
+      },
+      "cursorMetaRequest": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "uri": {
+            "type": "string"
+          }
+        }
+      },
+      "accountDetailsDto": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "adminFee": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "clientAccountDetails": {
+            "type": "string"
+          },
+          "clientRate": {
+            "type": "string"
+          },
+          "clientReference": {
+            "type": "string"
+          },
+          "closed": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "fundsOnHold": {
+            "type": "string"
+          },
+          "interestInstruction": {
+            "type": "string"
+          },
+          "externalNumber": {
+            "type": "string"
+          },
+          "maturityDate": {
+            "type": "string"
+          },
+          "noticeBalance": {
+            "type": "string"
+          },
+          "settlementAccount": {
+            "type": "string"
+          },
+          "statementFrequency": {
+            "type": "string"
+          },
+          "statementDeliveryMethod": {
+            "type": "string"
+          },
+          "activeSince": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "percentageAccess": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "nextInterestDate": {
+            "type": "string"
+          },
+          "term": {
+            "type": "string"
+          }
+        }
+      },
+      "bookValuesDto": {
+        "type": "object",
+        "properties": {
+          "intermediaryId": {
+            "type": "string"
+          },
+          "intermediaryBookValue": {
+            "$ref": "#/components/schemas/intermediaryBookValue"
+          }
+        }
+      },
+      "bookValuesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/bookValuesDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "clientAccountDto": {
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string"
+          },
+          "clientReference": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "electronicAccountNumber": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "getAccountDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/accountDetailsDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getInterestInstructionAccountDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/interestInstructionAccountDetailsDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getInterestInstructionAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/interestInstructionAccountDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getInterestInstructionSearchAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/searchResultDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getInterestInstructionSearchBeneficiaryAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/searchBeneficiariesResultDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getIntermediaryAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/intermediaryAccountDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getNetRateAndFeesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/netRatesDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getPaymentAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/subAccountDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "interestInstruction": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "interestPaymentAccountId": {
+            "type": "string"
+          },
+          "interestPaymentType": {
+            "type": "string"
+          }
+        }
+      },
+      "interestInstructionAccountDetailsDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountTypeName": {
+            "type": "string"
+          },
+          "amendInterestPaymentTo": {
+            "type": "string"
+          },
+          "clientAccountNumber": {
+            "type": "string"
+          },
+          "clientCode": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "interestPaymentType": {
+            "type": "string"
+          },
+          "legalStatusId": {
+            "type": "string"
+          },
+          "mainAccountName": {
+            "type": "string"
+          },
+          "mainAccountNumber": {
+            "type": "string"
+          },
+          "nextInterestDate": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "subAccountName": {
+            "type": "string"
+          },
+          "subAccountNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "interestInstructionAccountDto": {
+        "type": "object",
+        "properties": {
+          "subAccountName": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          }
+        }
+      },
+      "interestInstructionRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/interestInstruction"
+          }
+        }
+      },
+      "intermediaryAccountDto": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "intermediaryBookValue": {
+        "type": "object",
+        "properties": {
+          "usd": {
+            "type": "number",
+            "format": "double"
+          },
+          "zar": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "netRatesDto": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          },
+          "electronicAccountNumber": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "string"
+          },
+          "commissionFee": {
+            "type": "string"
+          }
+        }
+      },
+      "pagedAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/clientAccountDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "saveInterestInstructionDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "saveInterestInstructionResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/saveInterestInstructionDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "searchBeneficiariesResultDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "beneficiaryId": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "onceOffPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/onceOffPaymentRequestData"
+          }
+        }
+      },
+      "onceOffPaymentRequestData": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "beneficiaryAccountNumber": {
+            "type": "string"
+          },
+          "beneficiaryAccountName": {
+            "type": "string"
+          },
+          "beneficiaryAccountType": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "bankId": {
+            "type": "string"
+          },
+          "branchId": {
+            "type": "string"
+          },
+          "beneficiaryNotificationTypeId": {
+            "type": "string"
+          },
+          "paymentDescription": {
+            "type": "string"
+          },
+          "beneficiaryContactCellNumber": {
+            "type": "string"
+          },
+          "beneficiaryContactEmail": {
+            "type": "string"
+          },
+          "primaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "secondaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "string"
+          },
+          "fasterPayment": {
+            "type": "boolean"
+          },
+          "notifyMeViaNotificationTypeId": {
+            "type": "string"
+          },
+          "paymentDate": {
+            "type": "string"
+          }
+        }
+      },
+      "onceOffPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/onceOffPaymentResponseDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "onceOffPaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentReferenceNumber": {
+            "type": "string"
+          },
+          "paymentDate": {
+            "type": "string"
+          },
+          "signatory": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "searchResultDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "mainAccountName": {
+            "type": "string"
+          },
+          "clientAccountNumber": {
+            "type": "string"
+          },
+          "mainAccountNumber": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "interestPaymentType": {
+            "type": "string"
+          },
+          "amendInterestPaymentTo": {
+            "type": "string"
+          },
+          "amendInterestPaymentToName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fullAccountName": {
+            "type": "string"
+          },
+          "entityName": {
+            "type": "string"
+          }
+        }
+      },
+      "subAccountDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "categoryName": {
+            "type": "string"
+          },
+          "signatorySetting": {
+            "type": "string"
+          },
+          "beneficiaryEmailAddress": {
+            "type": "string"
+          },
+          "beneficiaryCellphoneNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "pendingTransaction": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          },
+          "olbReference": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "hostId": {
+            "type": "string"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "actionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "pendingTransactionId": {
+            "type": "string"
+          }
+        }
+      },
+      "pendingTransactionsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pendingTransaction"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "transactionsHistory": {
+        "type": "object",
+        "properties": {
+          "postedDate": {
+            "type": "string"
+          },
+          "balanceAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "postingSeqNo": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "credit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "debit": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "transactionCodeName": {
+            "type": "string"
+          },
+          "userReference": {
+            "type": "string"
+          },
+          "valueFromDate": {
+            "type": "string"
+          },
+          "narrative1": {
+            "type": "string"
+          },
+          "narrative2": {
+            "type": "string"
+          },
+          "narrative3": {
+            "type": "string"
+          },
+          "narrative4": {
+            "type": "string"
+          }
+        }
+      },
+      "transactionsHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/transactionsHistory"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "accountBalanceOLBResponse": {
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string"
+          },
+          "hostId": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "string"
+          },
+          "availableBalance": {
+            "type": "string"
+          },
+          "openToBuy": {
+            "type": "string"
+          },
+          "noticeBalance": {
+            "type": "string"
+          },
+          "electronicAccountNumber": {
+            "type": "string"
+          },
+          "interestRate": {
+            "type": "string"
+          },
+          "encumbrances": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "accountBalanceRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/accountBalanceRequestData"
+          }
+        }
+      },
+      "accountBalanceRequestData": {
+        "type": "object",
+        "properties": {
+          "accountNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "accountBalanceResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/accountBalanceOLBResponse"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "accountItem": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "transferFromReference": {
+            "type": "string"
+          },
+          "accountReference": {
+            "type": "string"
+          },
+          "primaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "secondaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notificationDetails": {
+            "$ref": "#/components/schemas/notificationDetails"
+          }
+        }
+      },
+      "addScheduledPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/addScheduledPaymentResponseDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "payBeneficiariesRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/payBeneficiaryRequestData"
+          }
+        }
+      },
+      "payBeneficiariesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/beneficiaryPaymentResponseDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "scheduledPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/scheduledPaymentRequestData"
+          }
+        }
+      },
+      "payBeneficiaryRequestData": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "paymentReference": {
+            "type": "string"
+          },
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "beneficiaryDetailsList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/beneficiaryItem"
+            }
+          }
+        }
+      },
+      "paymentItem": {
+        "type": "object",
+        "properties": {
+          "transferReference": {
+            "type": "string"
+          },
+          "notifyRecipientVia": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          }
+        }
+      },
+      "notificationDetails": {
+        "type": "object",
+        "properties": {
+          "cellNumber": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          }
+        }
+      },
+      "addScheduledPaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "scheduleName": {
+            "type": "string"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "authorisationId": {
+            "type": "string"
+          },
+          "paymentStatus": {
+            "type": "string"
+          },
+          "sourceAccount": {
+            "type": "string"
+          },
+          "destinationAccount": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "beneficiaryReferenceNumber": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "instructionCount": {
+            "type": "string"
+          },
+          "firstPaymentDate": {
+            "type": "string"
+          },
+          "notifyMeBy": {
+            "type": "string"
+          },
+          "notifyBeneficiaryBy": {
+            "type": "string"
+          }
+        }
+      },
+      "internalTransferRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/internalTransferRequestData"
+          }
+        }
+      },
+      "internalTransferRequestData": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "transferReference": {
+            "type": "string"
+          },
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "destinationAccounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/accountItem"
+            }
+          }
+        }
+      },
+      "internalTransfersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/transferResponseDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "transferResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string"
+          },
+          "transferFrom": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "string"
+          },
+          "signatorySetting": {
+            "type": "string"
+          },
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/paymentItem"
+            }
+          }
+        }
+      },
+      "getScheduledPaymentsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/scheduledPaymentDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "allocateFundsItem": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "beneficiaryAccountId": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "paymentDate": {
+            "type": "string"
+          },
+          "primaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "secondaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "allocateFundsResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string"
+          },
+          "sourceAccountName": {
+            "type": "string"
+          },
+          "signatorySetting": {
+            "type": "string"
+          },
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "referenceNumber": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "string"
+          },
+          "allocateFunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/allocateFundsItem"
+            }
+          }
+        }
+      },
+      "allocationRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/allocationRequestData"
+          }
+        }
+      },
+      "allocationRequestData": {
+        "type": "object",
+        "properties": {
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "allocateFunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/allocateFundsItem"
+            }
+          }
+        }
+      },
+      "allocationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/allocateFundsResponseDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "amendScheduledPaymentDto": {
+        "type": "object",
+        "properties": {
+          "scheduleName": {
+            "type": "string"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "paymentStatus": {
+            "type": "string"
+          },
+          "sourceAccount": {
+            "type": "string"
+          },
+          "destinationAccount": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "beneficiaryReferenceNumber": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "instructionCount": {
+            "type": "string"
+          },
+          "firstPaymentDate": {
+            "type": "string"
+          },
+          "notifyMeBy": {
+            "type": "string"
+          },
+          "notifyBeneficiaryBy": {
+            "type": "string"
+          }
+        }
+      },
+      "amendScheduledPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amendScheduledPaymentRequestData"
+          }
+        }
+      },
+      "amendScheduledPaymentRequestData": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "destinationAccountId": {
+            "type": "string"
+          },
+          "nextPaymentDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "beneficiaryNotificationVia": {
+            "type": "string"
+          },
+          "primaryAuthorisorGCN": {
+            "type": "string"
+          },
+          "secondaryAuthorisorGCN": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "string"
+          },
+          "beneficiaryPhoneNumber": {
+            "type": "string"
+          },
+          "beneficiaryEmail": {
+            "type": "string"
+          }
+        }
+      },
+      "amendScheduledPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amendScheduledPaymentDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "beneficiaryContactDetails": {
+        "type": "object",
+        "properties": {
+          "cellNumber": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          }
+        }
+      },
+      "beneficiaryItem": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "beneficiaryAccountId": {
+            "type": "string"
+          },
+          "paymentFromReference": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "primaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "secondaryAuthoriserGcn": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fasterPayment": {
+            "type": "boolean"
+          },
+          "beneficiaryContactDetails": {
+            "$ref": "#/components/schemas/beneficiaryContactDetails"
+          }
+        }
+      },
+      "instructionCountResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/instructionCountDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "beneficiaryPaymentItem": {
+        "type": "object",
+        "properties": {
+          "paymentReference": {
+            "type": "string"
+          },
+          "notifyBeneficiaryVia": {
+            "type": "string"
+          },
+          "beneficiaryAccountId": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "fasterPaymentMessage": {
+            "type": "string"
+          }
+        }
+      },
+      "beneficiaryPaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string"
+          },
+          "paymentFrom": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "string"
+          },
+          "signatorySetting": {
+            "type": "string"
+          },
+          "notifyMeVia": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/beneficiaryPaymentItem"
+            }
+          }
+        }
+      },
+      "bank": {
+        "type": "object",
+        "properties": {
+          "bankName": {
+            "type": "string"
+          },
+          "bankDescription": {
+            "type": "string"
+          },
+          "globalBranchCode": {
+            "type": "string"
+          },
+          "branches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/branch"
+            }
+          }
+        }
+      },
+      "branch": {
+        "type": "object",
+        "properties": {
+          "branchName": {
+            "type": "string"
+          },
+          "branchCode": {
+            "type": "string"
+          }
+        }
+      },
+      "getBanksResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bank"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "deleteScheduledDto": {
+        "type": "object",
+        "properties": {
+          "scheduleName": {
+            "type": "string"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "frequencyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/frequencyDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "frequencyDto": {
+        "type": "object",
+        "properties": {
+          "frequencyName": {
+            "type": "string"
+          },
+          "frequencyValue": {
+            "type": "string"
+          }
+        }
+      },
+      "deleteScheduledPaymentsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/deleteScheduledDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "errorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "amendCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/categoryDTO"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "categoryDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "clientDashboardSearchDetails": {
+        "type": "object",
+        "properties": {
+          "clientName": {
+            "type": "string"
+          },
+          "accountReference": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "introducer": {
+            "type": "string"
+          },
+          "electronicAccountNumber": {
+            "type": "string"
+          },
+          "intermediary": {
+            "type": "string"
+          }
+        }
+      },
+      "clientDashboardSearchResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/clientDashboardSearchDetails"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "clientDetailsDto": {
+        "type": "object",
+        "properties": {
+          "notesID": {
+            "type": "string"
+          },
+          "isIndividual": {
+            "type": "boolean"
+          },
+          "physicalAddressLine1": {
+            "type": "string"
+          },
+          "physicalAddressLine2": {
+            "type": "string"
+          },
+          "physicalAddressLine3": {
+            "type": "string"
+          },
+          "physicalAddressLine4": {
+            "type": "string"
+          },
+          "physicalAddressLine5": {
+            "type": "string"
+          },
+          "postalAddressLine1": {
+            "type": "string"
+          },
+          "postalAddressLine2": {
+            "type": "string"
+          },
+          "postalAddressLine3": {
+            "type": "string"
+          },
+          "postalAddressLine4": {
+            "type": "string"
+          },
+          "postalAddressLine5": {
+            "type": "string"
+          },
+          "cellPhone": {
+            "type": "string"
+          },
+          "dayPhone": {
+            "type": "string"
+          },
+          "eveningPhone": {
+            "type": "string"
+          },
+          "citizenship": {
+            "type": "string"
+          },
+          "passportNumber": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "string"
+          },
+          "statementDelivery": {
+            "type": "string"
+          },
+          "faxNumber": {
+            "type": "string"
+          },
+          "passportExpiry": {
+            "type": "string"
+          },
+          "profileLabel": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "stateID": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "string"
+          },
+          "taxNumber": {
+            "type": "string"
+          },
+          "countryOfIssue": {
+            "type": "string"
+          },
+          "identityLabel": {
+            "type": "string"
+          },
+          "ficaCompliant": {
+            "type": "string"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "introducer": {
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "residencyStatus": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "registrationNumber": {
+            "type": "string"
+          },
+          "contactDetails": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "vatNumber": {
+            "type": "string"
+          },
+          "residencyLabel1": {
+            "type": "string"
+          },
+          "residencyValue1": {
+            "type": "string"
+          },
+          "residencyLabel2": {
+            "type": "string"
+          },
+          "residencyValue2": {
+            "type": "string"
+          }
+        }
+      },
+      "addOrUpdateIntroducer": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "amendIntroducerRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/amendIntroducerRequestData"
+          }
+        }
+      },
+      "amendIntroducerRequestData": {
+        "type": "object",
+        "properties": {
+          "introducerName": {
+            "type": "string"
+          },
+          "introducerId": {
+            "type": "string"
+          },
+          "introducerOldName": {
+            "type": "string"
+          }
+        }
+      },
+      "deleteIntroducerResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/addOrUpdateIntroducer"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getIntroducersResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/introducer"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getIntroducersSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/introducerSummary"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "introducer": {
+        "type": "object",
+        "properties": {
+          "introducerId": {
+            "type": "string"
+          },
+          "introducerName": {
+            "type": "string"
+          }
+        }
+      },
+      "introducerRequest": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/introducerRequestData"
+          }
+        }
+      },
+      "introducerRequestData": {
+        "type": "object",
+        "properties": {
+          "introducerName": {
+            "type": "string"
+          }
+        }
+      },
+      "introducerSummary": {
+        "type": "object",
+        "properties": {
+          "introducerId": {
+            "type": "string"
+          },
+          "introducerName": {
+            "type": "string"
+          },
+          "clientName": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "accountType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "electronicAccountNumber": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          }
+        }
+      },
+      "postIntroducerResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/addOrUpdateIntroducer"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "putIntroducerResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/addOrUpdateIntroducer"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "scheduledPaymentRequestData": {
+        "type": "object",
+        "properties": {
+          "scheduleName": {
+            "type": "string"
+          },
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "destinationAccountId": {
+            "type": "string"
+          },
+          "firstPaymentDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "instructionCount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "beneficiaryNotificationVia": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "primaryAuthorisorGCN": {
+            "type": "string"
+          },
+          "secondaryAuthorisorGCN": {
+            "type": "string"
+          },
+          "authorisationPeriod": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "clientDetailsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/clientDetailsDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "createCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/categoryDTO"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "deleteCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/categoryDTO"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getProfilesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/intermediaryProfileDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "intermediaryProfileDto": {
+        "type": "object",
+        "properties": {
+          "defaultIntermediaryId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "intermediaryId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "intermediaryType": {
+            "type": "string"
+          },
+          "intermediaryTypeCode": {
+            "type": "string"
+          },
+          "intermediaryTypeDescription": {
+            "type": "string"
+          },
+          "intermediaryName": {
+            "type": "string"
+          },
+          "intermediaryCapabilityTypeId": {
+            "type": "string"
+          },
+          "intermediaryCapabilityTypeName": {
+            "type": "string"
+          }
+        }
+      },
+      "scheduledPaymentDto": {
+        "type": "object",
+        "properties": {
+          "scheduleName": {
+            "type": "string"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "sourceAccountName": {
+            "type": "string"
+          },
+          "destinationAccountId": {
+            "type": "string"
+          },
+          "destinationAccountNumber": {
+            "type": "string"
+          },
+          "destinationAccountName": {
+            "type": "string"
+          },
+          "destinationReferenceNumber": {
+            "type": "string"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "branchCode": {
+            "type": "string"
+          },
+          "branchName": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "instructionCount": {
+            "type": "string"
+          },
+          "nextPaymentDate": {
+            "type": "string"
+          },
+          "remainingPaymentsCount": {
+            "type": "string"
+          }
+        }
+      },
+      "olbAmendCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "olbCreateCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "setDefaultCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/categoryDTO"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "addApprovedBeneficiaryRequest": {
+        "type": "object",
+        "properties": {
+          "investecApprovedBeneficiary": {
+            "type": "string"
+          },
+          "referenceName": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "benName": {
+            "type": "string"
+          },
+          "globalBeneficiaryCategory": {
+            "type": "string"
+          },
+          "benEmailAddress": {
+            "type": "string"
+          },
+          "benCellNo": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "signatoryAGCN": {
+            "type": "string"
+          },
+          "signatoryBGCN": {
+            "type": "string"
+          }
+        }
+      },
+      "addBeneficiaryRequest": {
+        "type": "object",
+        "properties": {
+          "referenceName": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "benName": {
+            "type": "string"
+          },
+          "codeExt": {
+            "type": "string"
+          },
+          "codeMethod": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "codeType": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "benEmailAddress": {
+            "type": "string"
+          },
+          "benCellNo": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "signatoryAGCN": {
+            "type": "string"
+          },
+          "signatoryBGCN": {
+            "type": "string"
+          }
+        }
+      },
+      "instructionCountDto": {
+        "type": "object",
+        "properties": {
+          "instructionName": {
+            "type": "string"
+          },
+          "instructionValue": {
+            "type": "string"
+          }
+        }
+      },
+      "addOrUpdateBeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "beneficiaryId": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "isBeneficiaryAuthorisationRequired": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "addOrUpdateBeneficiaryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/addOrUpdateBeneficiaryDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "allApprovedBeneficiariesDto": {
+        "type": "object",
+        "properties": {
+          "beneficiaryId": {
+            "type": "string"
+          },
+          "legalName": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "beneficiaryCategory": {
+            "type": "string"
+          }
+        }
+      },
+      "amendApprovedBeneficiaryRequest": {
+        "type": "object",
+        "properties": {
+          "referenceName": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "benName": {
+            "type": "string"
+          },
+          "globalBeneficiaryCategory": {
+            "type": "string"
+          },
+          "benEmailAddress": {
+            "type": "string"
+          },
+          "benFaxNo": {
+            "type": "string"
+          },
+          "benCellNo": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "signatoryAGCN": {
+            "type": "string"
+          },
+          "signatoryBGCN": {
+            "type": "string"
+          }
+        }
+      },
+      "bulkUploadPersonalBeneficiariesDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "validBeneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bulkUploadPersonalBeneficiaryDto"
+            }
+          },
+          "invalidBeneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bulkUploadPersonalBeneficiaryDto"
+            }
+          },
+          "duplicateBeneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bulkUploadPersonalBeneficiaryDto"
+            }
+          }
+        }
+      },
+      "bulkUploadPersonalBeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "bank": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "branchCode": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "beneficiaryEmailAddress": {
+            "type": "string"
+          },
+          "beneficiaryCellNo": {
+            "type": "string"
+          }
+        }
+      },
+      "bulkUploadPersonalBeneficiaryRequest": {
+        "type": "object",
+        "properties": {
+          "beneficiaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/bulkUploadPersonalBeneficiaryRequestObject"
+            }
+          }
+        }
+      },
+      "bulkUploadPersonalBeneficiaryRequestObject": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string"
+          },
+          "bank": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "branchCode": {
+            "type": "string"
+          },
+          "beneficiaryReference": {
+            "type": "string"
+          },
+          "statementDescription": {
+            "type": "string"
+          },
+          "benName": {
+            "type": "string"
+          },
+          "benEmailAddress": {
+            "type": "string"
+          },
+          "benCellNo": {
+            "type": "string"
+          }
+        }
+      },
+      "bulkUploadPersonalBeneficiaryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/bulkUploadPersonalBeneficiariesDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "deleteBeneficiariesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/deleteBeneficiaryDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "deleteBeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "isBeneficiaryAuthorisationRequired": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "getAllApprovedBeneficiariesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/allApprovedBeneficiariesDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getApprovedBeneficiariesByProfileResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/getApprovedBeneficiaryByProfileDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "getApprovedBeneficiaryByProfileDto": {
+        "type": "object",
+        "properties": {
+          "beneficiaryId": {
+            "type": "string"
+          },
+          "investecApprovedBeneficiary": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "lastPaymentDate": {
+            "type": "string"
+          },
+          "lastPaymentAmount": {
+            "type": "string"
+          },
+          "referenceName": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "beneficiaryType": {
+            "type": "string"
+          },
+          "primarySignatoryGCN": {
+            "type": "string"
+          },
+          "secondarySignatoryGCN": {
+            "type": "string"
+          },
+          "beneficiaryEmailAddress": {
+            "type": "string"
+          },
+          "beneficiaryCellphoneNumber": {
+            "type": "string"
+          },
+          "globalBeneficiaryCategory": {
+            "type": "string"
+          }
+        }
+      },
+      "getBeneficiariesByProfileResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/personalBeneficiaryDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/meta"
+          }
+        }
+      },
+      "personalBeneficiaryDto": {
+        "type": "object",
+        "properties": {
+          "beneficiaryId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "beneficiaryName": {
+            "type": "string"
+          },
+          "codeExt": {
+            "type": "string"
+          },
+          "codeMethod": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "codeType": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "lastPaymentDate": {
+            "type": "string"
+          },
+          "lastPaymentAmount": {
+            "type": "string"
+          },
+          "referenceName": {
+            "type": "string"
+          },
+          "referenceAccountNumber": {
+            "type": "string"
+          },
+          "benName": {
+            "type": "string"
+          },
+          "beneficiaryType": {
+            "type": "string"
+          },
+          "fasterPaymentAllowed": {
+            "type": "boolean"
+          },
+          "fasterPaymentBankId": {
+            "type": "string"
+          },
+          "primarySignatoryGCN": {
+            "type": "string"
+          },
+          "secondarySignatoryGCN": {
+            "type": "string"
+          },
+          "beneficiaryEmail": {
+            "type": "string"
+          },
+          "beneficiaryCellNo": {
+            "type": "string"
+          }
+        }
+      },
+      "basePairDto": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          }
+        }
+      },
+      "buyDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        }
+      },
+      "channelScheduleDto": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "currencyPair": {
+            "type": "string"
+          },
+          "tenor": {
+            "type": "string"
+          },
+          "tradeEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "dayType": {
+            "type": "string"
+          },
+          "scheduleHours": {
+            "$ref": "#/components/schemas/scheduleHoursDto"
+          }
+        }
+      },
+      "currencyPairBusinessHoursDto": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          }
+        }
+      },
+      "currencyPairScheduleDto": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          },
+          "invertedRate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "quoteEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tradeEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "earliestTenor": {
+            "type": "string"
+          },
+          "businessHours": {
+            "$ref": "#/components/schemas/currencyPairBusinessHoursDto"
+          }
+        }
+      },
+      "getAllTradesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/tradeDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "getChannelSchedulesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/channelScheduleDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "getCurrencyPairSchedulesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/currencyPairScheduleDto"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "getQuoteEnabledCurrencyPairsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "cursorPagination": {
+        "type": "object",
+        "properties": {
+          "nextCursor": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalRecords": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "urls": {
+            "$ref": "#/components/schemas/cursorPaginationUrls"
+          }
+        }
+      },
+      "cursorPaginationUrls": {
+        "type": "object",
+        "properties": {
+          "nextPage": {
+            "type": "string"
+          },
+          "previousPage": {
+            "type": "string"
+          }
+        }
+      },
+      "quoteCurrencyPairItemDto": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          },
+          "buyCurrency": {
+            "type": "string"
+          },
+          "sellCurrency": {
+            "type": "string"
+          },
+          "buyCurrencyAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "sellCurrencyAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "tenor": {
+            "type": "string"
+          },
+          "expiryTime": {
+            "type": "string"
+          },
+          "rateId": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "clientRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "maxClientRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "settlementDate": {
+            "type": "string"
+          }
+        }
+      },
+      "quoteDto": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "timeToLive": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "requestDateTime": {
+            "type": "string"
+          },
+          "currencyPairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/quoteCurrencyPairItemDto"
+            }
+          }
+        }
+      },
+      "quotePairDto": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          }
+        }
+      },
+      "quoteRequest": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "currencyPairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/quoteRequestCurrencyPairItem"
+            }
+          }
+        }
+      },
+      "quoteRequestCurrencyPairItem": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          },
+          "buyCurrency": {
+            "type": "string"
+          },
+          "sellCurrency": {
+            "type": "string"
+          },
+          "buyCurrencyAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "sellCurrencyAmount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "tenor": {
+            "type": "string"
+          }
+        }
+      },
+      "ratesDto": {
+        "type": "object",
+        "properties": {
+          "clientRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "maxClientRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          },
+          "counterpartyClientRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        }
+      },
+      "requestPairDto": {
+        "type": "object",
+        "properties": {
+          "currencyPair": {
+            "type": "string"
+          },
+          "buy": {
+            "$ref": "#/components/schemas/buyDto"
+          },
+          "sell": {
+            "$ref": "#/components/schemas/sellDto"
+          }
+        }
+      },
+      "scheduleHoursDto": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          }
+        }
+      },
+      "sellDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        }
+      },
+      "submitRateQuoteResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/quoteDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "submitTradeRequest": {
+        "type": "object",
+        "properties": {
+          "tier": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "rateId": {
+            "type": "string"
+          },
+          "tradeId": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "counterpartyClientRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "limitCheck": {
+            "type": "string",
+            "enum": [
+              "Cash",
+              "Credit"
+            ],
+            "example": "Cash"
+          }
+        }
+      },
+      "submitTradeRequestResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/tradeRequestDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "tradeDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "tradeReference": {
+            "type": "string"
+          },
+          "tradeType": {
+            "type": "string"
+          },
+          "clientRequestId": {
+            "type": "string"
+          },
+          "clientTradeId": {
+            "type": "string"
+          },
+          "rateId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "counterparty": {
+            "type": "string"
+          },
+          "side": {
+            "type": "string"
+          },
+          "settlementTenor": {
+            "type": "string"
+          },
+          "priceTenor": {
+            "type": "string"
+          },
+          "rates": {
+            "$ref": "#/components/schemas/ratesDto"
+          },
+          "requestPair": {
+            "$ref": "#/components/schemas/requestPairDto"
+          },
+          "basePair": {
+            "$ref": "#/components/schemas/basePairDto"
+          },
+          "quotePair": {
+            "$ref": "#/components/schemas/quotePairDto"
+          },
+          "settlementDate": {
+            "type": "string"
+          },
+          "requestDateTime": {
+            "type": "string"
+          },
+          "limitCheck": {
+            "type": "string"
+          },
+          "riskReference": {
+            "type": "string"
+          },
+          "settlementReference": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          }
+        }
+      },
+      "tradeRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "tradeReference": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "getSettlementDataValidationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/settlementDataValidationDto"
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      },
+      "settlementDataValidationDto": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string"
+          },
+          "currencyPair": {
+            "type": "string"
+          },
+          "isTradeEnabled": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "priceAge": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isInverted": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "earliestSettlementTenor": {
+            "type": "string"
+          },
+          "settlementDates": {
+            "$ref": "#/components/schemas/settlementDatesDto"
+          }
+        }
+      },
+      "settlementDatesDto": {
+        "type": "object",
+        "properties": {
+          "tenors": {
+            "$ref": "#/components/schemas/settlementTenors"
+          }
+        }
+      },
+      "settlementTenors": {
+        "type": "object",
+        "properties": {
+          "additionalProp1": {
+            "type": "string"
+          },
+          "additionalProp2": {
+            "type": "string"
+          },
+          "additionalProp3": {
+            "type": "string"
+          }
+        }
+      },
+      "getEnabledTenorsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/cursorMeta"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -1,0 +1,2895 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SA CIB Investec for Intermediaries Foreign Exchange API",
+    "description": "# Introduction\n The Forex Settlement API allows Investec Forex Intermediary clients to access trade details and provide settlement documentation (Balance of Payments (BOP) plus supporting documentation) via an API. This API allows you to access and manage the following BOP report actions: \n * Retrieve \n * Update  \n * Validate  \n * Supporting documents \n ## Getting started \n To start using the Forex Settlement API, you'll need API credentials which you can setup using your [Investec Online Profile](https://login.secure.investec.com/). Create a new API key (x-api-key) with the scopes you want it to access. \n \n Optionally, use the [OAuth-2 - Sandbox](#section/Authentication/OAuth-2-Sandbox) account and credentials to generate mock responses to test your applications. You can use the Sandbox account without the need to open an Investec account. \n ## Making a request\n To successfully submit a request ensure that you have a valid token which you can obtain using the authentication method. Add the token as an authentication header to your requests. \n\n ## Known issues\n\n Clarity on scenarios or field mapping confusion you might run into. \n\n **Report.locationCountry**: The location country field is to identify which country is involved in supplying/receiving a service or from which country goods were imported or to which country goods were exported. \n\n **Report. MonetaryAmount.locationCountry**: This indicates the country where the goods or services were procured or rendered.  E.g. if importing from Germany it would be 'DE'.\n\n **Report.NonResident.Individual.Address.Country**: This cannot be 'ZA'. in cases where the actual value is ZA, using the country of the currency being paid is the correct approach.\n\n **Report.OriginatingCountry**: The country code of the originating bank (The bank from which the funds are being sent)\n\n **Report.ReceivingCountry**: The country code of the receiving bank (The bank to which the funds are being sent)\n\n **Report.Resident.Individual.TaxNumber**: We do run a SARS checksum validation on the TaxNumber provided. We will provide a warning (not an error) if the number provided does not validate successfully against the checksum. There are instances where a Tax number is valid but fails the checksum. \n\n **Report.counterpartyStatus**: This is the status of the Remitter or beneficiary (NonResident). The only valid values for this field are 'South African Resident' or 'Non Resident'. \n\n  \n # Authentication\n The Investec For Intermediaries API supports both 3 Legged OAuth as well as OAuth 2. For making authenticated requests on behalf of your users we recommend using 3 Legged OAuth. For system-to-system integration we recommend the OAuth-2 flow.\n\n ## OAuth-2\n Follow instructions here `https://developer.investec.com/za/api-products/documentation/SA_Open_API_-_Authorization` \n\n ## OAuth-2-Sandbox \n\n To use the sandbox environment use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. \n\n Authenticating: \n* **Auth URL (POST):** `https://openapisandbox.investec.com/identity/v2/oauth2/token` \n* **header**  `Authorization: Basic Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6UnplNWNjSVNGNG1Gckdlaw==`  \n* **header**  `x-api-key: Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6YVc1MlpYTjBaV010ZW1FdGFXWnBMV1p2Y21WNExXbHVkbVZ6ZEdWak0yeHZZUzF6WVc1a1ltOTQ=` \n* **header** `Content-Type: application/x-www-form-urlencoded` \n* **data-urlencode** `grant_type=client_credentials` \n\n The basic authorization header are as follows: \n\n *clientId:* `gOUVQZoJ3AyTz22OHcIQAJJLzIG0Dy1Y`\n\n *secret:* `Rze5ccISF4mFrGek` \n\n Eg. Base64-encode ( {clientId}:{secret} ) \n\n# Release Notes\n\n 2024-02-14\n\n* **Release**: Added Multiple Monetary Amounts allowing more than 1 sequence and SARB Authorization Code validation to allow for more Bulk reporting arrangements. Updated SDA forex allowances endpoint\n\n 2023-11-14\n\n* **Release**: Added support for Bulk reporting with SARB Approval.  This allows the resident (applicant) data to be submitted via the API when the required SARB approval is in place and recorded on Investec's systems\n\n 2023-07-07\n\n* **Release**: Amended bop report request and response payloads to move the tax clearance certificate indicator to only the monetary amount section \n\n 2023-07-04\n\n* **Release**: Updated bop report request payload \n\n 2022-07-28\n\n* **Release**: First release deployed \n\n # Bulk Reporting\n\n For bulk reporting you are required to have a SARB Authorisation Application Number. This enables you to report offshore payments without the need to onboard the underlying client (applicant) with Investec. \n\n Reporting: \n\n Submit a PUT request on the [Update a single BOP report](#tag/BOP-Reports/paths/~1za~1ifi~1v1~1forex~1bop-reports~1%7BtransactionReference%7D/put) endpoint: \n* Enhance the \"resident\" object of the payload with your applicant data \n* **report.monetaryAmount.sarbAuth.sarbAuthAppNumber** = {YOUR_SARB_AUTHORISATION_APPLICATION_NUMBER} \n* **report.monetaryAmount.sarbAuth.sarbAuthDate** = {SARB_AUTH_DATE} \n* **report.monetaryAmount.sarbAuth.sarbAuthRefNumber** = {YOUR_SARB_AUTHORISATION_REFERENCE_NUMBER} \n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "version": "1.0",
+    "termsOfService": "https://developer.investec.com/za/terms-of-use"
+  },
+  "servers": [
+    {
+      "url": "https://openapi.investec.com"
+    }
+  ],
+  "paths": {
+    "/za/ifi/v1/forex/bop-reports": {
+      "get": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Get BOP reports",
+        "description": "Retrieves all BOP reports for the specified list type",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "enum": [
+                "all",
+                "New",
+                "Incomplete",
+                "DocsRequired",
+                "DocsReceived",
+                "Completed",
+                "Cancelled"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Collection of BOP report summary records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportSummaryModelListSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/{transactionReference}": {
+      "get": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Get BOP Report by transaction reference",
+        "description": "Retrieves BOP report details for the specified transaction reference",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BOP report details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportDetailsQueryModelSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Update a single BOP report",
+        "description": "Updates a BOP report with the values provided",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsBulkReportingCommandModel"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsCommandModel"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the BOP report."
+          },
+          "400": {
+            "description": "A validation error has occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportValidationModelListSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/{transactionReference}/validation": {
+      "post": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Validate BOP report details",
+        "description": "Simply validates the submitted BOP report details",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsBulkReportingCommandModel"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsCommandModel"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "BOP report validation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportValidationModelListSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/{transactionReference}/documents": {
+      "get": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Get required documents by transaction reference",
+        "description": "Retrieves the collection of supporting documents required and attached to the BOP report",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "BOP report supporting documents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportDocumentDetailsModelListSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/{transactionReference}/documents/{documentHandle}": {
+      "put": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Upload file contents",
+        "description": "Upload file contents for the provided document handle",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document contents successfully uploaded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportDocumentDetailsModelSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Get document by the document handle",
+        "description": "Retrieves the base64 encoded content of the supporting document identified by the document handle",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentHandle",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Base64 encoded content of supporting document",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportDocumentModelSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/{transactionReference}:{action}": {
+      "patch": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Execute action on transaction",
+        "description": "Perfoms the specified action against the BOP report identified by the transaction reference",
+        "parameters": [
+          {
+            "name": "transactionReference",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "Approve"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The status of the BOP report identified by the transaction reference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportStatusModelSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/allowances/{accountNo}/balance": {
+      "get": {
+        "tags": [
+          "Forex"
+        ],
+        "summary": "Get FX allowance balance by account number",
+        "description": "Retrieves forex allowance balances for the provided account number",
+        "parameters": [
+          {
+            "name": "accountNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forex allowance balances",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxAllowanceBalancesModelSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddressCommandModel": {
+        "type": "object",
+        "properties": {
+          "addressLine2": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressLine1": {
+            "type": "string",
+            "nullable": true
+          },
+          "suburb": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AddressQueryModel": {
+        "type": "object",
+        "properties": {
+          "addressLine2": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressLine1": {
+            "type": "string",
+            "nullable": true
+          },
+          "suburb": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "province": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BeneficiaryBankCommandModel": {
+        "type": "object",
+        "properties": {
+          "swiftbic": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BeneficiaryBankQueryModel": {
+        "type": "object",
+        "properties": {
+          "swiftbic": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactDetailsCommandModel": {
+        "type": "object",
+        "properties": {
+          "contactSurname": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactDetailsQueryModel": {
+        "type": "object",
+        "properties": {
+          "contactSurname": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "fax": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CorrespondentBankCommandModel": {
+        "type": "object",
+        "properties": {
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "swiftbic": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CorrespondentBankQueryModel": {
+        "type": "object",
+        "properties": {
+          "bankName": {
+            "type": "string",
+            "nullable": true
+          },
+          "swiftbic": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxAllowanceBalancesModel": {
+        "required": [
+          "limits",
+          "valueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "valueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Limit"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxAllowanceBalancesModelSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxAllowanceBalancesModel"
+              }
+            ]
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDetailsBulkReportingCommandModel": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MetaCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "report": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportAllCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDetailsCommandModel": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MetaCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "report": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDetailsQueryModel": {
+        "required": [
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MetaQueryModel"
+              }
+            ]
+          },
+          "report": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReportQueryModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDetailsQueryModelSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxBopReportDetailsQueryModel"
+              }
+            ]
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDocumentDetailsModel": {
+        "type": "object",
+        "properties": {
+          "documentHandle": {
+            "type": "string",
+            "nullable": true
+          },
+          "scope": {
+            "type": "string",
+            "nullable": true
+          },
+          "reportingSpace": {
+            "type": "string",
+            "nullable": true
+          },
+          "transactionReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "uploaded": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "acknowledged": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDocumentDetailsModelListSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxBopReportDocumentDetailsModel"
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDocumentDetailsModelSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxBopReportDocumentDetailsModel"
+              }
+            ]
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDocumentModel": {
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportDocumentModelSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxBopReportDocumentModel"
+              }
+            ]
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportStatusModel": {
+        "required": [
+          "reportingSpace",
+          "status",
+          "transactionReference"
+        ],
+        "type": "object",
+        "properties": {
+          "transactionReference": {
+            "type": "string"
+          },
+          "reportingSpace": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportStatusModelSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FxBopReportStatusModel"
+              }
+            ]
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportSummaryModel": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "valueDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "string",
+            "nullable": true
+          },
+          "systemReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "tradeReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "zar": {
+            "type": "string",
+            "nullable": true
+          },
+          "flow": {
+            "type": "string",
+            "nullable": true
+          },
+          "corporate": {
+            "type": "string",
+            "nullable": true
+          },
+          "originBank": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportSummaryModelListSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxBopReportSummaryModel"
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportValidationModel": {
+        "required": [
+          "code",
+          "importExportInstance",
+          "message",
+          "moneyInstance",
+          "name",
+          "scope",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "moneyInstance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "importExportInstance": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxBopReportValidationModelListSuccessResponseModel": {
+        "required": [
+          "data",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxBopReportValidationModel"
+            }
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportExportCommandModel": {
+        "type": "object",
+        "properties": {
+          "subsequenceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "importControlNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentCurrencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ucr": {
+            "type": "string",
+            "nullable": true
+          },
+          "transportDocumentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportExportQueryModel": {
+        "type": "object",
+        "properties": {
+          "subsequenceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "importControlNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentCurrencyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "ucr": {
+            "type": "string",
+            "nullable": true
+          },
+          "transportDocumentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentValue": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Limit": {
+        "required": [
+          "accumulatedValue",
+          "completedValue",
+          "limitType",
+          "limitValue",
+          "pendingValue",
+          "withinLimit"
+        ],
+        "type": "object",
+        "properties": {
+          "limitType": {
+            "type": "string"
+          },
+          "limitValue": {
+            "type": "number",
+            "format": "float"
+          },
+          "accumulatedValue": {
+            "type": "number",
+            "format": "float"
+          },
+          "withinLimit": {
+            "type": "boolean"
+          },
+          "pendingValue": {
+            "type": "number",
+            "format": "float"
+          },
+          "completedValue": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanInterestCommandModel": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "plusMinus": {
+            "type": "string",
+            "nullable": true
+          },
+          "rate": {
+            "type": "string",
+            "nullable": true
+          },
+          "interestType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoanInterestQueryModel": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "nullable": true
+          },
+          "baseRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "plusMinus": {
+            "type": "string",
+            "nullable": true
+          },
+          "rate": {
+            "type": "string",
+            "nullable": true
+          },
+          "interestType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaCommandModel": {
+        "type": "object",
+        "properties": {
+          "equationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "edited": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MetaQueryModel": {
+        "type": "object",
+        "properties": {
+          "tradeReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "equationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "outsourcerMarginAmount": {
+            "type": "string",
+            "nullable": true
+          },
+          "outsourcerMarginCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "fxrbrMktSpotRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "negotiatedCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "outsourcerFxRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "sellAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "cptyShortName": {
+            "type": "string",
+            "nullable": true
+          },
+          "buySell": {
+            "type": "string",
+            "nullable": true
+          },
+          "tradeDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "traderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "productType": {
+            "type": "string",
+            "nullable": true
+          },
+          "finalRate": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "edited": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonetaryAmountCommandModel": {
+        "type": "object",
+        "properties": {
+          "categoryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanInterestRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "categorySubCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateIndicator": {
+            "type": "string",
+            "nullable": true
+          },
+          "foreignValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanRefNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "thirdParty": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThirdPartyCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "swiftDetails": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuth": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SarbAuthCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "loanTenor": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanTenorType": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanTenorMaturityDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "importExport": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportExportCommandModel"
+            },
+            "nullable": true
+          },
+          "loanInterest": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LoanInterestCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MonetaryAmountQueryModel": {
+        "type": "object",
+        "properties": {
+          "categoryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanInterestRate": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "categorySubCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "foreignValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateIndicator": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanRefNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "randValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "sequenceNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "thirdParty": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThirdPartyQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "swiftDetails": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuth": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SarbAuthQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "loanTenor": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanTenorType": {
+            "type": "string",
+            "nullable": true
+          },
+          "loanTenorMaturityDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "importExport": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportExportQueryModel"
+            },
+            "nullable": true
+          },
+          "loanInterest": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LoanInterestQueryModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentCommandModel": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentEntityCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentIndividualCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentEntityCommandModel": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "entityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentEntityQueryModel": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "entityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentIndividualCommandModel": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "accountIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportCountry": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentIndividualQueryModel": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "accountIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportCountry": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonResidentQueryModel": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentEntityQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentIndividualQueryModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentDetailCommandModel": {
+        "type": "object",
+        "properties": {
+          "beneficiaryBank": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BeneficiaryBankCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "correspondentBank": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CorrespondentBankCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "isCorrespondentBank": {
+            "type": "string",
+            "nullable": true
+          },
+          "charges": {
+            "type": "string",
+            "nullable": true
+          },
+          "swiftDetails": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentDetailQueryModel": {
+        "type": "object",
+        "properties": {
+          "beneficiaryBank": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BeneficiaryBankQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "correspondentBank": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CorrespondentBankQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "isCorrespondentBank": {
+            "type": "string",
+            "nullable": true
+          },
+          "charges": {
+            "type": "string",
+            "nullable": true
+          },
+          "swiftDetails": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportAllCommandModel": {
+        "type": "object",
+        "properties": {
+          "receivingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "monetaryAmount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonetaryAmountCommandModel"
+            },
+            "nullable": true
+          },
+          "originatingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "correspondentCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonResident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "flow": {
+            "type": "string",
+            "nullable": true
+          },
+          "originatingBank": {
+            "type": "string",
+            "nullable": true
+          },
+          "resident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentAllCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "accountHolderStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterpartyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDetail": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentDetailCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportCommandModel": {
+        "type": "object",
+        "properties": {
+          "receivingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "monetaryAmount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonetaryAmountCommandModel"
+            },
+            "nullable": true
+          },
+          "originatingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "correspondentCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonResident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "flow": {
+            "type": "string",
+            "nullable": true
+          },
+          "originatingBank": {
+            "type": "string",
+            "nullable": true
+          },
+          "resident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "counterpartyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDetail": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentDetailCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReportQueryModel": {
+        "type": "object",
+        "properties": {
+          "receivingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "flowCurrency": {
+            "type": "string",
+            "nullable": true
+          },
+          "monetaryAmount": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonetaryAmountQueryModel"
+            },
+            "nullable": true
+          },
+          "totalForeignValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "trnReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "originatingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "correspondentCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "nonResident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonResidentQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "flow": {
+            "type": "string",
+            "nullable": true
+          },
+          "originatingBank": {
+            "type": "string",
+            "nullable": true
+          },
+          "resident": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "valueDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountHolderStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "counterpartyStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "locationCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDetail": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaymentDetailQueryModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentAllCommandModel": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentEntityCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentIndividualAllCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentCommandModel": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentEntityCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentIndividualCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentEntityCommandModel": {
+        "type": "object",
+        "properties": {
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "faxNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentEntityQueryModel": {
+        "type": "object",
+        "properties": {
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "institutionalSector": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "industrialClassification": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContactDetailsQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "tradingName": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentIndividualAllCommandModel": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "faxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonFaxContactDetailsCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "accountIdentifier": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "idNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentEntityAllCommandModel": {
+        "type": "object",
+        "properties": {
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "faxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NonFaxContactDetailsCommandModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NonFaxContactDetailsCommandModel": {
+        "type": "object",
+        "properties": {
+          "contactSurname": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentIndividualCommandModel": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "postalAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "faxNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentIndividualQueryModel": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "tempResPermitNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "tempResExpiryDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContactDetailsQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxClearanceCertificateReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "idNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportExpiryDate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ResidentQueryModel": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentEntityQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ResidentIndividualQueryModel"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SarbAuthCommandModel": {
+        "type": "object",
+        "properties": {
+          "sarbAuthAppNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuthRefNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuthDate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SarbAuthQueryModel": {
+        "type": "object",
+        "properties": {
+          "sarbAuthAppNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuthRefNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sarbAuthDate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThirdPartyCommandModel": {
+        "type": "object",
+        "properties": {
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContactDetailsCommandModel"
+              }
+            ],
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThirdPartyEntityQueryModel": {
+        "type": "object",
+        "properties": {
+          "registrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThirdPartyIndividualQueryModel": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "nullable": true
+          },
+          "tempResPermitNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "surname": {
+            "type": "string",
+            "nullable": true
+          },
+          "idNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "passportCountry": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThirdPartyQueryModel": {
+        "type": "object",
+        "properties": {
+          "postalAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "entity": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThirdPartyEntityQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "streetAddress": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "contactDetails": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ContactDetailsQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "customsClientNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "individual": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThirdPartyIndividualQueryModel"
+              }
+            ],
+            "nullable": true
+          },
+          "taxNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "readOnly": true
+          }
+        },
+        "additionalProperties": {}
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "BOP Reports",
+      "description": "Manages the Balance of Payments Report information and attached documents"
+    },
+    {
+      "name": "Forex",
+      "description": "Allows foreign exchange information to be retrieved for clients of intermediaries"
+    }
+  ]
+}

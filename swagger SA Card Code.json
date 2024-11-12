@@ -1,0 +1,1737 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://openapi.investec.com",
+      "description": "",
+      "variables": {}
+    }
+  ],
+  "info": {
+    "version": "1.0.0",
+    "title": "SA Card Code",
+    "description": "# Introduction\n The Programmable Card API is a programmatic endpoint that manages Private Banking and Corporate Investment Banking cards. This API allows you to access and manage the following:\n- Cards\n- Deploy code\n- Run simulations\n- Manage environmental variables\n- Retrieve merchant codes\n- Retrieve currencies\n- Retrieve countries\n # Getting Started\nTo start using the Programmable Card API, you’ll need API credentials, which you can access in your [Investec Online Banking](https://login.secure.investec.com) profile. Create a new API key (x-api-key) with specified API scopes. Remember to include the *cards* scope\n\n## Run with Postman\n[Open the collection in postman](https://www.postman.com/investec-open-api/workspace/programmable-banking/collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=share&creator=26868804)  \nor fork  \n[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=collection%2Ffork&collection-url=entityId%3D26868804-00260d55-0009-42ee-b148-d439992e64ff%26entityType%3Dcollection%26workspaceId%3D905c2bab-81a1-4297-8b70-2456c776a7a0)\n\nThe instructions below will guide you through the process of authenticating in the Postman app: \n1. Set the verb to POST and enter the auth URL [https://openapi.investec.com/identity/v2/oauth2/token](https://openapi.investec.com/identity/v2/oauth2/token) as the request URL.\n2. The endpoint receives your client ID and client secret as [BASIC](https://en.wikipedia.org/wiki/BASIC) authentication headers. Select the Authorization tab and select BASIC AUTH from the Type list.\n3. Enter your client_ID into the USERNAME field and your secret into the PASSWORD field \n4. Select the Headers tab and enter the “x-api-key” into the KEY field\n5. Enter your API key into the VALUE field\n6. Select the Body tab and select the x-www-form-urlencoded option\n7. Enter grant_type into the KEY field and client_credentials into the VALUE field.\n8. Send off your request.\n\nIf your keys are valid, the response will contain an access token and the number of seconds the access token is valid. \nSample response:\n```json\n{\n    \"access_token\": \"Z1CRQarGOSogNuUhRlENi5iKAGqh”,\n    \"token_type\": \"Bearer\",\n    \"expires_in\": 1799,\n    \"scope\": \"accounts\"\n}\n```\n\n# Authentication\n1. OAuth 2.0 access tokens are used to authenticate requests. Your access token authorises you to use the Programmable Card API.\n2. To call the API, you must exchange your client ID, secret and API (x-api-key) key for an access token. \n3. You need to include the access token in the Authorisation header with the designation bearer when making calls to the API\n4. The access token returned during the authentication request is valid for 30 minutes, at which point it will expire, and you will need to request a new one by calling /identity/v2/oauth2/token again.\n\nWhen you make calls to the API, include the access token in the Authorisation header with the designation as Bearer. \n<SecurityDefinitions />",
+    "termsOfService": "https://developer.investec.com/terms-of-use",
+    "contact": {},
+    "license": {
+      "name": ""
+    }
+  },
+  "tags": [
+    {
+      "name": "Card management",
+      "description": "Get a list of cards as well as retrieving the card information. Also included is the ability to create virtual cards"
+    },
+    {
+      "name": "Card code management",
+      "description": "Retrieve and maintain the code on the specific card, including testing and viewing logs"
+    },
+    {
+      "name": "Card environmental variables",
+      "description": "Retrieve and maintain the user defined environmental variables. Note: the variables are read-only when the card code is executed"
+    },
+    {
+      "name": "Toggle",
+      "description": "Ability to toggle whether the code on the card will be executed"
+    },
+    {
+      "name": "Reference data",
+      "description": "Utility endpoints that expose the reference data that contained in the response data"
+    }
+  ],
+  "paths": {
+    "/za/v1/cards": {
+      "get": {
+        "summary": "Get Cards",
+        "description": "Obtain cards associated with the account.",
+        "operationId": "GetCards",
+        "tags": [
+          "Card management"
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/pb/v1/cards HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "cards": [
+                      {
+                        "CardKey": "1010101",
+                        "CardNumber": "402167XXXXXX1111",
+                        "IsProgrammable": true,
+                        "Status": "Active",
+                        "CardTypeCode": "VGC",
+                        "AccountNumber": "10011001100",
+                        "AccountId": "177778438355553632224"
+                      },
+                      {
+                        "CardKey": "1020202",
+                        "CardNumber": "402167XXXXXX2222",
+                        "IsProgrammable": true,
+                        "Status": "Active",
+                        "CardTypeCode": "VGC",
+                        "AccountNumber": "10011001100",
+                        "AccountId": "177778438355553632224"
+                      },
+                      {
+                        "CardKey": "1030303",
+                        "CardNumber": "402167XXXXXX3333",
+                        "IsProgrammable": true,
+                        "Status": "Active",
+                        "CardTypeCode": "VGC",
+                        "AccountNumber": "10011001100",
+                        "AccountId": "177778438355553632224"
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Cards"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Virtual Card",
+        "description": "Create a virtual card associated with the specified account.",
+        "operationId": "CreateVirtualCard",
+        "tags": [
+          "Card management"
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards' \n --header 'Content-Type: application/json' \n --header 'Authorization: Bearer {yourBearerToken}' \n --data '{\n\"AccountNumber\": \"{accountNumber}\",\n\"EmbossName\" : \"CardEmbossName\",\n\"EmbossName2\" : \"CardEmbossName2\"\n}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/v1/cards HTTP/1.1 \nHost: openapi.investec.com \nContent-Type: application/json \nAuthorization: Bearer {yourBearerToken} \nContent-Length: 122 \n \n{\n     \"AccountNumber\": \"{accountnumber}\",\n     \"EmbossName\" : \"CardEmbossName\",\n     \"EmbossName2\" : \"CardEmbossName2\"\n}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "CardKey": "212121",
+                      "IsVirtualCard": true,
+                      "EmbossName": "CardEmbossName",
+                      "EmbossName2": "CardEmbossName2"
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCard"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}": {
+      "get": {
+        "summary": "Get Card Detail",
+        "description": "Retrieve card detail excluding sensitive information.",
+        "operationId": "GetCardDetail",
+        "tags": [
+          "Card management"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/212121' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/pb/v1/cards/212121 HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "CardKeyHash": "212121",
+                      "MaskedCardNumber": "402222xxxxx2222",
+                      "EmbossName": "CardEmbossName",
+                      "EmbossName2": "CardEmbossName2",
+                      "Status": "Active",
+                      "AccountNumber": "{accountnumber}",
+                      "IsVirtualCard": true,
+                      "ExtendedDetails": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      },
+      "post": {
+        "summary": "Get Card Detail (With Sensitive Information)",
+        "description": "Get the detail of a card including full card number, cvv and expiry date\nNote on usage \n- In order to retrieve sensitive information on the card you have to supply details regarding a RSA Public key that gets created client side. We will encrypt the sensitive information at the lowest level with the specified public key information.  \n- In order to view the information in the extended property you would need to decrypt it with the Private key created in the preceding step.  \n\n| Area                   | Value     |\n| :------                | :-------  |\n| Encryption Algorithm   | RSA       |\n| Key Size               | 2048      |",
+        "operationId": "GetCardDetailSensitive",
+        "tags": [
+          "Card management"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "extended",
+            "description": "Set to true in to retrieve extended sensitive card information",
+            "required": true,
+            "example": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/212121?extended=true' \n --header 'Content-Type: application/json' \n --header 'Authorization: Bearer {yourBearerToken}' \n --data '{\n\"AccountNumber\": \"{accountNumber}\",\n\"EmbossName\" : \"CardEmbossName\",\n\"EmbossName2\" : \"CardEmbossName2\"\n}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/v1/cards/212121?extended=true HTTP/1.1 \nHost: openapi.investec.com \nContent-Type: application/json \nAuthorization: Bearer {yourBearerToken} \nContent-Length: 122 \n \n{\n     \"AccountNumber\": \"{accountnumber}\",\n     \"EmbossName\" : \"CardEmbossName\",\n     \"EmbossName2\" : \"CardEmbossName2\"\n}"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "keyId": {
+                    "type": "number",
+                    "description": "Number to identify your key"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "What you identify your key with"
+                  },
+                  "appName": {
+                    "type": "string",
+                    "description": "App name of the application that generate the RSA Key Pair"
+                  },
+                  "modulus": {
+                    "type": "string",
+                    "description": "**Important**: The key modulus, normally key.n"
+                  },
+                  "exponent": {
+                    "type": "string",
+                    "description": "**Important**: The key modulus, normally public_exponent"
+                  }
+                },
+                "example": {
+                  "keyId": 0,
+                  "identifier": "My RSA Key Identifier",
+                  "appName": "Some App name",
+                  "modulus": "6bddcfec7132fc5f80a00b236cc891480b3e08d49b64eb9a4794de4f8af4345a8746131e2ff1f985b7c4bd3e554d759b30d612a5013f43d0e0f2d0b2383a43426a596f98b9a45adf254f9a9730f258c051152a73174e24c453a7199746f8535f6e3a07b09aaaaa67ef2b129bda63de86a111f9b5f6e1f72726ed115b916d6a379f392663a1a4194d15d6c77dfbbd255f3992e161e624dc3795cc60f634ea88e6d077b9c8f535ed4465661d7055d09b3187e23ed5b0d38169c8d37d813aa2ac78848ac52306e2c5c4b9a5d4a32bd2bdb39cb45d32d2453dc2ab9ea2bea9170b9236b0f055a1cd2595635ae9f563003da9047cd96097bc45dcc97a0601d2b92431",
+                  "exponent": "010001"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "CardKeyHash": "2121212",
+                      "MaskedCardNumber": "402222xxxxx2222",
+                      "EmbossName": "CardEmbossName",
+                      "EmbossName2": "CardEmbossName2",
+                      "Status": "Active",
+                      "AccountNumber": "{accountnumber}",
+                      "IsVirtualCard": true,
+                      "ExtendedDetails": {
+                        "CardNumber": "{base64EncryptedString}",
+                        "ExpiryDate": "{base64EncryptedString}",
+                        "CVV2": "{base64EncryptedString}"
+                      }
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/code": {
+      "get": {
+        "summary": "Get Function (saved) code",
+        "operationId": "GetFunctionCode",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Obtain code currently saved to the specific card.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/pb/v1/cards/{cardKey}/code HTTP/1.1 \n  Host: openapi.investec.com \n Authorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "codeId": "3BB77753-R2D2-4U2B-1A2B-4C213E7D0AC3",
+                      "code": "// This function runs during the card transaction authorization flow.\n// It has a limited execution time, so keep any code short-running.\nconst beforeTransaction = async (authorization) => {\n    console.log(authorization);\n    return true;\n};\n\n// This function runs after a transaction.\nconst afterTransaction = async (transaction) => {\n    console.log(transaction)\n};\n\n// This function runs after a transaction.\nconst afterDecline = async (transaction) => {\n    console.log(transaction)\n};",
+                      "createdAt": "2021-10-12T09:12:06.695Z",
+                      "updatedAt": "2021-10-12T09:12:06.695Z",
+                      "publishedAt": "2021-10-12T09:12:16.557Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      },
+      "post": {
+        "summary": "Update Function Code (Without publishing to card)",
+        "operationId": "UpdateFunctionCode",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Save specified code to the specific card. Note: This allows you to save/stage the code to the card without publishing it. This implies that the code will not execute when a card transaction occurs.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data '{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/pb/v1/cards/{cardKey}/code HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "code": "//Sample code to just log \n const beforeTransaction = async (authorization) => { \n var transaction = authorization; \n console.log(transaction); \n return true; \n }; \n const afterTransaction = async (transaction) => { \n console.log(transaction); \n};"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "codeId": "3BB77753-R2D2-4U2B-1A2B-4C213E7D0AC3",
+                      "code": "//Sample code to just log \n const beforeTransaction = async (authorization) => { \n var transaction = authorization; \n console.log(transaction); \n return true; \n }; \n const afterTransaction = async (transaction) => { \n console.log(transaction); \n};",
+                      "createdAt": "2021-10-12T09:12:06.695Z",
+                      "updatedAt": "2021-10-12T09:12:06.695Z",
+                      "publishedAt": "2021-10-12T09:12:16.557Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/publishedcode": {
+      "get": {
+        "summary": "Get Function (published) code",
+        "operationId": "GetPublishedCode",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Obtain code currently published to the specific card.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/publishedcode' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/{cardKey}/publishedcode HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "codeId": "3BB77753-R2D2-4U2B-1A2B-4C213E7D0AC3",
+                      "code": "//Sample code to just log \n const beforeTransaction = async (authorization) => { \n var transaction = authorization; \n console.log(transaction); \n return true; \n }; \n const afterTransaction = async (transaction) => { \n console.log(transaction); \n};",
+                      "createdAt": "2021-10-12T09:12:06.695Z",
+                      "updatedAt": "2021-10-12T09:12:06.695Z",
+                      "publishedAt": "2021-10-12T09:12:16.557Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/publish": {
+      "post": {
+        "summary": "Publish Saved Code",
+        "operationId": "PublishFunctionCode",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Publish specified code to the specific card. *Note: This will mark the saved code as the published code ready for execution. Remember to specify the {codeid} obtained from the Get Function (saved) code.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/publish' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data-raw '{\"codeid\": \"C39D51E7-588B-4296-BFFD-B7383FE3A1B9\",\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/pb/v1/cards/{cardKey}/publish HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"codeid\": \"C39D51E7-588B-4296-BFFD-B7383FE3A1B9\",\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "codeid": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "codeid": "C39D51E7-588B-4296-BFFD-B7383FE3A1B9",
+                  "code": "//Sample code to just log \n const beforeTransaction = async (authorization) => { \n var transaction = authorization; \n console.log(transaction); \n return true; \n }; \n const afterTransaction = async (transaction) => { \n console.log(transaction); \n};"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "codeId": "3BB79753-R2D2-4U2B-1A2B-4C219E7D0AC3",
+                      "code": "//Sample code to just log \n const beforeTransaction = async (authorization) => { \n var transaction = authorization; \n console.log(transaction); \n return true; \n }; \n const afterTransaction = async (transaction) => { \n console.log(transaction); \n};",
+                      "createdAt": "2021-10-12T09:12:06.695Z",
+                      "updatedAt": "2021-10-12T09:12:06.695Z",
+                      "publishedAt": "2021-10-12T09:12:16.557Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/code/execute": {
+      "post": {
+        "summary": "Execute Function Code (Simulation)",
+        "operationId": "ExecuteFunctionCode",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Publish specified code to the specific card. Note: This allows you to push code to the specified card. After successfully publishing the code it will execute the next time a card transaction occurs.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/code/execute' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data '{\n\"simulationcode\": \"// This function runs during the card transaction authorization flow.\\n// It has a limited execution time, so keep any code short-running.\\nconst beforeTransaction = async (authorization) => {\\n    console.log(authorization);\\n    return true;\\n};\\n\\n// This function runs after a transaction.\\nconst afterTransaction = async (transaction) => {\\n    console.log(transaction)\\n};\",\n\"centsAmount\": \"10000\",\n\"currencyCode\": \"zar\",\n\"merchantCode\": 5462,\n\"merchantName\": \"The Coders Bakery\",\n\"merchantCity\": \"Cape Town\",\n\"countryCode\": \"ZA\"\n}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/v1/cards/{cardKey}/code/execute HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\n\"simulationcode\": \"// This function runs during the card transaction authorization flow.\\n// It has a limited execution time, so keep any code short-running.\\nconst beforeTransaction = async (authorization) => {\\n    console.log(authorization);\\n    return true;\\n};\\n\\n// This function runs after a transaction.\\nconst afterTransaction = async (transaction) => {\\n    console.log(transaction)\\n};\",\n\"centsAmount\": \"10000\",\n\"currencyCode\": \"zar\",\n\"merchantCode\": 5462,\n\"merchantName\": \"The Coders Bakery\",\n\"merchantCity\": \"Cape Town\",\n\"countryCode\": \"ZA\"\n}"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "simulationcode": {
+                    "type": "string"
+                  },
+                  "centsAmount": {
+                    "type": "string"
+                  },
+                  "currencyCode": {
+                    "type": "string"
+                  },
+                  "merchantCode": {
+                    "type": "number"
+                  },
+                  "merchantName": {
+                    "type": "string"
+                  },
+                  "merchantCity": {
+                    "type": "string"
+                  },
+                  "countryCode": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "simulationcode": "// This function runs during the card transaction authorization flow.\n// It has a limited execution time, so keep any code short-running.\nconst beforeTransaction = async (authorization) => {\n    console.log(authorization);\n    return true;\n};\n\n// This function runs after a transaction.\nconst afterTransaction = async (transaction) => {\n    console.log(transaction)\n};",
+                  "centsAmount": "10000",
+                  "currencyCode": "zar",
+                  "merchantCode": 5462,
+                  "merchantName": "The Coders Bakery",
+                  "merchantCity": "Cape Town",
+                  "countryCode": "ZA"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": [
+                      {
+                        "executionId": "ABB8854D-B3A4-4450-BB9D-915206E8D156",
+                        "rootCodeFunctionId": "96A88E6A-E343-4051-9674-7C58B4CC1A58",
+                        "sandbox": true,
+                        "type": "before_transaction",
+                        "authorizationApproved": true,
+                        "logs": [
+                          {
+                            "createdAt": "2021-10-15T03:48:14.771Z",
+                            "level": "info",
+                            "content": "{\"accountNumber\":\"10011001100\",\"dateTime\":\"2021-10-15T03:48:13.147Z\",\"centsAmount\":10100,\"currencyCode\":\"zar\",\"type\":\"card\",\"reference\":\"simulation\",\"card\":{\"id\":\"1010101\"},\"merchant\":{\"category\":{\"code\":\"7996\",\"key\":\"amusement_parks_carnivals\",\"name\":\"Amusement Parks/Carnivals\"},\"name\":\"uShaka MarineÂ World\",\"city\":\"Durban\",\"country\":{\"code\":\"ZA\",\"alpha3\":\"ZAF\",\"name\":\"South Africa\"}}}"
+                          }
+                        ],
+                        "smsCount": 0,
+                        "emailCount": 0,
+                        "pushNotificationCount": 0,
+                        "createdAt": "2021-10-15T03:48:14.184Z",
+                        "startedAt": "2021-10-15T03:48:14.183Z",
+                        "completedAt": "2021-10-15T03:48:14.899Z",
+                        "updatedAt": "2021-10-15T03:48:14.184Z",
+                        "Error": null
+                      },
+                      {
+                        "executionId": "688357B2-1F2B-49F7-A739-3D9DAF87CD84",
+                        "rootCodeFunctionId": "96A88E6A-E343-4051-9674-7C58B4CC1A58",
+                        "sandbox": true,
+                        "type": "after_transaction",
+                        "authorizationApproved": null,
+                        "logs": [
+                          {
+                            "createdAt": "2021-10-15T03:48:15.712Z",
+                            "level": "info",
+                            "content": "{\"accountNumber\":\"10011001100\",\"dateTime\":\"2021-10-15T03:48:14.920Z\",\"centsAmount\":10100,\"currencyCode\":\"zar\",\"type\":\"card\",\"reference\":\"simulation\",\"card\":{\"id\":\"1010101\"},\"merchant\":{\"category\":{\"code\":\"7996\",\"key\":\"amusement_parks_carnivals\",\"name\":\"Amusement Parks/Carnivals\"},\"name\":\"uShaka MarineÂ World\",\"city\":\"Durban\",\"country\":{\"code\":\"ZA\",\"alpha3\":\"ZAF\",\"name\":\"South Africa\"}}}"
+                          }
+                        ],
+                        "smsCount": 0,
+                        "emailCount": 0,
+                        "pushNotificationCount": 0,
+                        "createdAt": "2021-10-15T03:48:15.082Z",
+                        "startedAt": "2021-10-15T03:48:15.082Z",
+                        "completedAt": "2021-10-15T03:48:15.826Z",
+                        "updatedAt": "2021-10-15T03:48:15.082Z",
+                        "Error": null
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/code/executions": {
+      "get": {
+        "summary": "Get Executions",
+        "operationId": "GetFunctionExecutions",
+        "tags": [
+          "Card code management"
+        ],
+        "description": "Fetches the logs of the simulated as well as the actual transactions for the specific card.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/code/executions' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/{cardKey}/code/executions HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": [
+                      {
+                        "executionId": "ABB8854D-B3A4-4450-BB9D-915206E8D156",
+                        "rootCodeFunctionId": "96A88E6A-E343-4051-9674-7C58B4CC1A58",
+                        "sandbox": true,
+                        "type": "before_transaction",
+                        "authorizationApproved": true,
+                        "logs": [
+                          {
+                            "createdAt": "2021-10-15T03:48:14.771Z",
+                            "level": "info",
+                            "content": "{\"accountNumber\":\"10011001100\",\"dateTime\":\"2021-10-15T03:48:13.147Z\",\"centsAmount\":10100,\"currencyCode\":\"zar\",\"type\":\"card\",\"reference\":\"simulation\",\"card\":{\"id\":\"1010101\"},\"merchant\":{\"category\":{\"code\":\"7996\",\"key\":\"amusement_parks_carnivals\",\"name\":\"Amusement Parks/Carnivals\"},\"name\":\"uShaka MarineÂ World\",\"city\":\"Durban\",\"country\":{\"code\":\"ZA\",\"alpha3\":\"ZAF\",\"name\":\"South Africa\"}}}"
+                          }
+                        ],
+                        "smsCount": 0,
+                        "emailCount": 0,
+                        "pushNotificationCount": 0,
+                        "createdAt": "2021-10-15T03:48:14.184Z",
+                        "startedAt": "2021-10-15T03:48:14.183Z",
+                        "completedAt": "2021-10-15T03:48:14.899Z",
+                        "updatedAt": "2021-10-15T03:48:14.184Z",
+                        "Error": null
+                      },
+                      {
+                        "executionId": "688357B2-1F2B-49F7-A739-3D9DAF87CD84",
+                        "rootCodeFunctionId": "96A88E6A-E343-4051-9674-7C58B4CC1A58",
+                        "sandbox": true,
+                        "type": "after_transaction",
+                        "authorizationApproved": null,
+                        "logs": [
+                          {
+                            "createdAt": "2021-10-15T03:48:15.712Z",
+                            "level": "info",
+                            "content": "{\"accountNumber\":\"10011001100\",\"dateTime\":\"2021-10-15T03:48:14.920Z\",\"centsAmount\":10100,\"currencyCode\":\"zar\",\"type\":\"card\",\"reference\":\"simulation\",\"card\":{\"id\":\"1010101\"},\"merchant\":{\"category\":{\"code\":\"7996\",\"key\":\"amusement_parks_carnivals\",\"name\":\"Amusement Parks/Carnivals\"},\"name\":\"uShaka MarineÂ World\",\"city\":\"Durban\",\"country\":{\"code\":\"ZA\",\"alpha3\":\"ZAF\",\"name\":\"South Africa\"}}}"
+                          }
+                        ],
+                        "smsCount": 0,
+                        "emailCount": 0,
+                        "pushNotificationCount": 0,
+                        "createdAt": "2021-10-15T03:48:15.082Z",
+                        "startedAt": "2021-10-15T03:48:15.082Z",
+                        "completedAt": "2021-10-15T03:48:15.826Z",
+                        "updatedAt": "2021-10-15T03:48:15.082Z",
+                        "Error": null
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/environmentvariables": {
+      "get": {
+        "summary": "Get Environment Variables",
+        "operationId": "GetFunctionEnvironmentVariables",
+        "tags": [
+          "Card environmental variables"
+        ],
+        "description": "Gets the key value pairs of user defined variables securely stored against a specific card.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/environmentvariables' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/{cardKey}/environmentvariables HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "variables": {},
+                      "createdAt": "2021-10-12T09:12:06.742Z",
+                      "updatedAt": "2021-10-12T09:12:06.742Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      },
+      "post": {
+        "summary": "Replace Environment Variables",
+        "operationId": "UpdateFunctionEnvironmentVariables",
+        "tags": [
+          "Card environmental variables"
+        ],
+        "description": "Sets the environment variables stored against a specific card. Note: This replaces all variables and does not allow for patching.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/environmentvariables' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n--data '{    \n\"variables\": {\n    \"test1\": \"value11\",\n    \"test2\": \"value22\"\n   }\n}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/v1/cards/{cardKey}/environmentvariables HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{    \n\"variables\": {\n    \"test1\": \"value11\",\n    \"test2\": \"value22\"\n   }\n}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": {
+                      "variables": {
+                        "test1": "value11",
+                        "test2": "value22"
+                      },
+                      "createdAt": "2021-10-15T05:18:09.891Z",
+                      "updatedAt": "2021-10-15T05:18:09.891Z",
+                      "error": null
+                    }
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "variables": {
+                    "test1": "value11",
+                    "test2": "value22"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/za/v1/cards/{cardKey}/toggle-programmable-feature": {
+      "post": {
+        "summary": "Toggle Programmable Feature",
+        "operationId": "CardsToggleNew",
+        "tags": [
+          "Toggle"
+        ],
+        "description": "Toggle the programmable feature for a specific card.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cardKey",
+            "description": "The CardKey obtained from the get cards call.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/toggle-programmable-feature' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n--data'{\n    \"Enabled\": false\n}' "
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "POST /za/v1/cards/{cardKey}/toggle-programmable-feature HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{    \n\"variables\": '{\n    \"Enabled\": false\n}'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Enabled": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "example": {
+                  "Enabled": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/za/v1/cards/countries": {
+      "get": {
+        "summary": "Get Countries",
+        "operationId": "GetCountries",
+        "tags": [
+          "Reference data"
+        ],
+        "parameters": [],
+        "description": "Gets a reference set of countries.",
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/countries' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/countries HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": [
+                      {
+                        "Code": "ZA",
+                        "Name": "South Africa"
+                      },
+                      {
+                        "Code": "GB",
+                        "Name": "United Kingdom of Great Britain and Northern Ireland (the)"
+                      },
+                      {
+                        "Code": "undefined",
+                        "Name": "undefined"
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/currencies": {
+      "get": {
+        "summary": "Get Currencies",
+        "operationId": "GetCurrencies",
+        "tags": [
+          "Reference data"
+        ],
+        "parameters": [],
+        "description": "Gets a reference set of currencies.",
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/currencies' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/currencies HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": [
+                      {
+                        "Code": "ZAR",
+                        "Name": "South African Rand"
+                      },
+                      {
+                        "Code": "GBP",
+                        "Name": "British Pound"
+                      },
+                      {
+                        "Code": "USD",
+                        "Name": "United States Dollar"
+                      },
+                      {
+                        "Code": "EUR",
+                        "Name": "Euro"
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    },
+    "/za/v1/cards/merchants": {
+      "get": {
+        "summary": "Get Merchants",
+        "operationId": "GetMerchants",
+        "tags": [
+          "Reference data"
+        ],
+        "parameters": [],
+        "description": "Get a reference set of merchant category codes and descriptions.",
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "label": "cURL",
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/merchants' \n --header 'Authorization: Bearer {yourBearerToken}'"
+          },
+          {
+            "lang": "HTTP",
+            "label": "HTTP",
+            "source": "GET /za/v1/cards/merchants HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource has been retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "result": [
+                      {
+                        "Code": "7623",
+                        "Name": "A/C, Refrigeration Repair"
+                      },
+                      {
+                        "Code": "8931",
+                        "Name": "Accounting/Bookkeeping Services"
+                      },
+                      {
+                        "Code": "7311",
+                        "Name": "Advertising Services"
+                      }
+                    ]
+                  },
+                  "links": {
+                    "self": null
+                  },
+                  "meta": {
+                    "totalPages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - The requested operation will not be carried out"
+          },
+          "401": {
+            "description": "Unauthorized - The requested operation was refused access"
+          },
+          "403": {
+            "description": "Forbidden - Not permitted to make this request"
+          },
+          "429": {
+            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
+          },
+          "500": {
+            "description": "Internal Server Error - The requested operation failed to execute"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "Oauth2": {
+        "description": "",
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://openapi.investec.com/identity/v2/oauth2/token",
+            "x-api-key": "dWJHTHUxY1MzUnRjV3NzN29pWkpjNUZEbjhQaHhYUUw6N0YwRkNEQzgzQUE5MzdDQkNDMzhCMkU4ODQ2OUI1NzQ2MTQ1NTlENzgzQjRCMDhFRDBGMTY5NzQ5ODQzQjk1Qg==",
+            "scopes": {
+              "cards": "Programmable banking card functionality"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Cards": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CardData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "Cards"
+      },
+      "CreateCard": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreateCardData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "CreateCard"
+      },
+      "CreateCardData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/CreateCardResult"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "CreateCardResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "CardKey": {
+            "type": "string",
+            "format": "integer"
+          },
+          "IsVirtualCard": {
+            "type": "boolean"
+          },
+          "EmbossName": {
+            "type": "string"
+          },
+          "EmbossName2": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "CardKey",
+          "EmbossName",
+          "EmbossName2",
+          "IsVirtualCard"
+        ],
+        "title": "Result"
+      },
+      "CardData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            }
+          }
+        },
+        "required": [
+          "cards"
+        ],
+        "title": "Data"
+      },
+      "Card": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "CardKey": {
+            "type": "string",
+            "format": "integer"
+          },
+          "CardNumber": {
+            "type": "string"
+          },
+          "IsProgrammable": {
+            "type": "boolean"
+          },
+          "Status": {
+            "type": "string"
+          },
+          "CardTypeCode": {
+            "type": "string"
+          },
+          "AccountNumber": {
+            "type": "string"
+          },
+          "AccountId": {
+            "type": "string"
+          },
+          "EmbossedName": {
+            "type": "string"
+          },
+          "IsVirtualCard": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "AccountId",
+          "AccountNumber",
+          "CardKey",
+          "CardNumber",
+          "CardTypeCode",
+          "EmbossedName",
+          "IsProgrammable",
+          "IsVirtualCard",
+          "Status"
+        ],
+        "title": "Card"
+      },
+      "CardDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CardDetailsData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "CardDetails"
+      },
+      "CardDetailsData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/CardDetailsResult"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "CardDetailsResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "CardKeyHash": {
+            "type": "string",
+            "format": "integer"
+          },
+          "MaskedCardNumber": {
+            "type": "string"
+          },
+          "EmbossName": {
+            "type": "string"
+          },
+          "EmbossName2": {
+            "type": "string"
+          },
+          "Status": {
+            "type": "string"
+          },
+          "AccountNumber": {
+            "type": "string"
+          },
+          "IsVirtualCard": {
+            "type": "boolean"
+          },
+          "ExtendedDetails": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "AccountNumber",
+          "CardKeyHash",
+          "EmbossName",
+          "EmbossName2",
+          "ExtendedDetails",
+          "IsVirtualCard",
+          "MaskedCardNumber",
+          "Status"
+        ],
+        "title": "Result"
+      },
+      "Links": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "self": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "self"
+        ],
+        "title": "Links"
+      },
+      "Meta": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "totalPages": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "totalPages"
+        ],
+        "title": "Meta"
+      }
+    }
+  },
+  "security": [
+    {
+      "Oauth2": [
+        "cards"
+      ]
+    }
+  ],
+  "externalDocs": {
+    "url": "https://developer.investec.com/za/api-products",
+    "description": "Investec developer portal - API Products"
+  }
+}

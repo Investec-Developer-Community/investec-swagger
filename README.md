@@ -1,4 +1,4 @@
-# Welcome to Investec's API Swagger Documents Repository 🚀
+# Welcome to Investec's API Community Swagger Doc 🚀
 
 This repository is your place to have your say on Investec's API Swagger documents. 
 

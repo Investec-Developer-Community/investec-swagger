@@ -10,7 +10,7 @@ We’d love for community members to jump in and help us improve them. If you ha
   <img src="audio/thumbnail.png" alt="Podcast Thumbnail" height="350">
 </a>
 
-[Download the podcast.](audio/Investec%20API%20Specification%20Podcast.mp4) [9mb]
+[Download the podcast.](audio/Investec%20API%20Specification%20Podcast.mp4) [5mb | 21 min]
 
 ## What's Inside? 📂
 

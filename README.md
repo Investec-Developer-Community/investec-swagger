@@ -4,6 +4,14 @@ This repository is your place to have your say on Investec's API Swagger documen
 
 We’d love for community members to jump in and help us improve them. If you have updates or suggestions, feel free to contribute! Our API team will review and, if everything checks out, add them to the official documents.
 
+## A podcast overview on all the Swagger docs 🎧
+
+<a href="audio/Investec%20Private%20Bank%20API%20Specification.mp4">
+  <img src="audio/thumbnail.png" alt="Podcast Thumbnail" height="350">
+</a>
+
+[Download the podcast](audio/Investec%20Private%20Bank%20API%20Specification.mp4)
+
 ## What's Inside? 📂
 
 This repository includes Swagger documents for:

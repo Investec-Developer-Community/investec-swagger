@@ -6,11 +6,11 @@ We’d love for community members to jump in and help us improve them. If you ha
 
 ## A podcast overview on all the Swagger docs 🎧
 
-<a href="audio/Investec%20API%20Specification.mp4">
+<a href="audio/Investec%20API%20Specification%20Podcast.mp4">
   <img src="audio/thumbnail.png" alt="Podcast Thumbnail" height="350">
 </a>
 
-[Download the podcast.](audio/Investec%20API%20Specification.mp4) [9mb]
+[Download the podcast.](audio/Investec%20API%20Specification%20Podcast.mp4) [9mb]
 
 ## What's Inside? 📂
 

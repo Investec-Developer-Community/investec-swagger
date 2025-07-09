@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SA CIB Investec for Intermediaries Foreign Exchange API",
-    "description": "# Introduction\n The Forex Settlement API allows Investec Forex Intermediary clients to access trade details and provide settlement documentation (Balance of Payments (BOP) plus supporting documentation) via an API. This API allows you to access and manage the following BOP report actions: \n * Retrieve \n * Update  \n * Validate  \n * Supporting documents \n ## Getting started \n To start using the Forex Settlement API, you'll need API credentials which you can setup using your [Investec Online Profile](https://login.secure.investec.com/). Create a new API key (x-api-key) with the scopes you want it to access. \n \n Optionally, use the [OAuth-2 - Sandbox](#section/Authentication/OAuth-2-Sandbox) account and credentials to generate mock responses to test your applications. You can use the Sandbox account without the need to open an Investec account. \n ## Making a request\n To successfully submit a request ensure that you have a valid token which you can obtain using the authentication method. Add the token as an authentication header to your requests. \n\n ## Known issues\n\n Clarity on scenarios or field mapping confusion you might run into. \n\n **Report.locationCountry**: The location country field is to identify which country is involved in supplying/receiving a service or from which country goods were imported or to which country goods were exported. \n\n **Report. MonetaryAmount.locationCountry**: This indicates the country where the goods or services were procured or rendered.  E.g. if importing from Germany it would be 'DE'.\n\n **Report.NonResident.Individual.Address.Country**: This cannot be 'ZA'. in cases where the actual value is ZA, using the country of the currency being paid is the correct approach.\n\n **Report.OriginatingCountry**: The country code of the originating bank (The bank from which the funds are being sent)\n\n **Report.ReceivingCountry**: The country code of the receiving bank (The bank to which the funds are being sent)\n\n **Report.Resident.Individual.TaxNumber**: We do run a SARS checksum validation on the TaxNumber provided. We will provide a warning (not an error) if the number provided does not validate successfully against the checksum. There are instances where a Tax number is valid but fails the checksum. \n\n **Report.counterpartyStatus**: This is the status of the Remitter or beneficiary (NonResident). The only valid values for this field are 'South African Resident' or 'Non Resident'. \n\n  \n # Authentication\n The Investec For Intermediaries API supports both 3 Legged OAuth as well as OAuth 2. For making authenticated requests on behalf of your users we recommend using 3 Legged OAuth. For system-to-system integration we recommend the OAuth-2 flow.\n\n ## OAuth-2\n Follow instructions here `https://developer.investec.com/za/api-products/documentation/SA_Open_API_-_Authorization` \n\n ## OAuth-2-Sandbox \n\n To use the sandbox environment use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. \n\n Authenticating: \n* **Auth URL (POST):** `https://openapisandbox.investec.com/identity/v2/oauth2/token` \n* **header**  `Authorization: Basic Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6UnplNWNjSVNGNG1Gckdlaw==`  \n* **header**  `x-api-key: Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6YVc1MlpYTjBaV010ZW1FdGFXWnBMV1p2Y21WNExXbHVkbVZ6ZEdWak0yeHZZUzF6WVc1a1ltOTQ=` \n* **header** `Content-Type: application/x-www-form-urlencoded` \n* **data-urlencode** `grant_type=client_credentials` \n\n The basic authorization header are as follows: \n\n *clientId:* `gOUVQZoJ3AyTz22OHcIQAJJLzIG0Dy1Y`\n\n *secret:* `Rze5ccISF4mFrGek` \n\n Eg. Base64-encode ( {clientId}:{secret} ) \n\n# Release Notes\n\n 2024-02-14\n\n* **Release**: Added Multiple Monetary Amounts allowing more than 1 sequence and SARB Authorization Code validation to allow for more Bulk reporting arrangements. Updated SDA forex allowances endpoint\n\n 2023-11-14\n\n* **Release**: Added support for Bulk reporting with SARB Approval.  This allows the resident (applicant) data to be submitted via the API when the required SARB approval is in place and recorded on Investec's systems\n\n 2023-07-07\n\n* **Release**: Amended bop report request and response payloads to move the tax clearance certificate indicator to only the monetary amount section \n\n 2023-07-04\n\n* **Release**: Updated bop report request payload \n\n 2022-07-28\n\n* **Release**: First release deployed \n\n # Bulk Reporting\n\n For bulk reporting you are required to have a SARB Authorisation Application Number. This enables you to report offshore payments without the need to onboard the underlying client (applicant) with Investec. \n\n Reporting: \n\n Submit a PUT request on the [Update a single BOP report](#tag/BOP-Reports/paths/~1za~1ifi~1v1~1forex~1bop-reports~1%7BtransactionReference%7D/put) endpoint: \n* Enhance the \"resident\" object of the payload with your applicant data \n* **report.monetaryAmount.sarbAuth.sarbAuthAppNumber** = {YOUR_SARB_AUTHORISATION_APPLICATION_NUMBER} \n* **report.monetaryAmount.sarbAuth.sarbAuthDate** = {SARB_AUTH_DATE} \n* **report.monetaryAmount.sarbAuth.sarbAuthRefNumber** = {YOUR_SARB_AUTHORISATION_REFERENCE_NUMBER} \n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "description": "# Introduction\n The Forex Settlement API allows Investec Forex Intermediary clients to access trade details and provide settlement documentation (Balance of Payments (BOP) plus supporting documentation) via an API. This API allows you to access and manage the following BOP report actions: \n * Retrieve \n * Update  \n * Validate  \n * Supporting documents \n ## Getting started \n To start using the Forex Settlement API, you'll need API credentials which you can setup using your [Investec Online Profile](https://login.secure.investec.com/). Create a new API key (x-api-key) with the scopes you want it to access. \n \n Optionally, use the [OAuth-2 - Sandbox](#section/Authentication/OAuth-2-Sandbox) account and credentials to generate mock responses to test your applications. You can use the Sandbox account without the need to open an Investec account. \n ## Making a request\n To successfully submit a request ensure that you have a valid token which you can obtain using the authentication method. Add the token as an authentication header to your requests. \n\n ## Known issues\n\n Clarity on scenarios or field mapping confusion you might run into. \n\n **Report.locationCountry**: The location country field is to identify which country is involved in supplying/receiving a service or from which country goods were imported or to which country goods were exported. \n\n **Report. MonetaryAmount.locationCountry**: This indicates the country where the goods or services were procured or rendered.  E.g. if importing from Germany it would be 'DE'.\n\n **Report.NonResident.Individual.Address.Country**: This cannot be 'ZA'. in cases where the actual value is ZA, using the country of the currency being paid is the correct approach.\n\n **Report.OriginatingCountry**: The country code of the originating bank (The bank from which the funds are being sent)\n\n **Report.ReceivingCountry**: The country code of the receiving bank (The bank to which the funds are being sent)\n\n **Report.Resident.Individual.TaxNumber**: We do run a SARS checksum validation on the TaxNumber provided. We will provide a warning (not an error) if the number provided does not validate successfully against the checksum. There are instances where a Tax number is valid but fails the checksum. \n\n **Report.counterpartyStatus**: This is the status of the Remitter or beneficiary (NonResident). The only valid values for this field are 'South African Resident' or 'Non Resident'. \n\n  \n # Authentication\n The Investec For Intermediaries API supports both 3 Legged OAuth as well as OAuth 2. For making authenticated requests on behalf of your users we recommend using 3 Legged OAuth. For system-to-system integration we recommend the OAuth-2 flow.\n\n ## OAuth-2\n Follow instructions here `https://developer.investec.com/za/api-products/documentation/SA_Open_API_-_Authorization` \n\n ## OAuth-2-Sandbox \n\n To use the sandbox environment use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. \n\n Authenticating: \n* **Auth URL (POST):** `https://openapisandbox.investec.com/identity/v2/oauth2/token` \n* **header**  `Authorization: Basic Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6UnplNWNjSVNGNG1Gckdlaw==`  \n* **header**  `x-api-key: Z09VVlFab0ozQXlUejIyT0hjSVFBSkpMeklHMER5MVk6YVc1MlpYTjBaV010ZW1FdGFXWnBMV1p2Y21WNExXbHVkbVZ6ZEdWak0yeHZZUzF6WVc1a1ltOTQ=` \n* **header** `Content-Type: application/x-www-form-urlencoded` \n* **data-urlencode** `grant_type=client_credentials` \n\n The basic authorization header are as follows: \n\n *clientId:* `gOUVQZoJ3AyTz22OHcIQAJJLzIG0Dy1Y`\n\n *secret:* `Rze5ccISF4mFrGek` \n\n Eg. Base64-encode ( {clientId}:{secret} ) \n\n# Release Notes\n\n 2025-04-11\n\n* **Release**: Validate BOP and GET required documents without trnreference endpoints.\n\n 2024-02-14\n\n* **Release**: Added Multiple Monetary Amounts allowing more than 1 sequence and SARB Authorization Code validation to allow for more Bulk reporting arrangements. Updated SDA forex allowances endpoint\n\n 2023-11-14\n\n* **Release**: Added support for Bulk reporting with SARB Approval.  This allows the resident (applicant) data to be submitted via the API when the required SARB approval is in place and recorded on Investec's systems\n\n 2023-07-07\n\n* **Release**: Amended bop report request and response payloads to move the tax clearance certificate indicator to only the monetary amount section \n\n 2023-07-04\n\n* **Release**: Updated bop report request payload \n\n 2022-07-28\n\n* **Release**: First release deployed \n\n # Bulk Reporting\n\n For bulk reporting you are required to have a SARB Authorisation Application Number. This enables you to report offshore payments without the need to onboard the underlying client (applicant) with Investec. \n\n Reporting: \n\n Submit a PUT request on the [Update a single BOP report](#tag/BOP-Reports/paths/~1za~1ifi~1v1~1forex~1bop-reports~1%7BtransactionReference%7D/put) endpoint: \n* Enhance the \"resident\" object of the payload with your applicant data \n* **report.monetaryAmount.sarbAuth.sarbAuthAppNumber** = {YOUR_SARB_AUTHORISATION_APPLICATION_NUMBER} \n* **report.monetaryAmount.sarbAuth.sarbAuthDate** = {SARB_AUTH_DATE} \n* **report.monetaryAmount.sarbAuth.sarbAuthRefNumber** = {YOUR_SARB_AUTHORISATION_REFERENCE_NUMBER} \n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
     "version": "1.0",
     "termsOfService": "https://developer.investec.com/za/terms-of-use"
   },
@@ -234,6 +234,115 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/validation": {
+      "post": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Validate BOP report details",
+        "description": "Simply validates the submitted BOP report details",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsBulkReportingCommandModel"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FxBopReportDetailsCommandModel"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "BOP report validation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxBopReportValidationModelListSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/za/ifi/v1/forex/bop-reports/required-documents": {
+      "post": {
+        "tags": [
+          "BOP Reports"
+        ],
+        "summary": "Retrieve collection of required documents",
+        "description": "Retrieves the collection of required documents",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of required documents results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxRequiredDocumentsSuccessResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request validation errors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxRequiredDocumentsValidation"
                 }
               }
             }
@@ -2834,6 +2943,262 @@
         },
         "additionalProperties": false
       },
+      "FxRequiredDocumentsSuccessResponseModel": {
+        "type": "object",
+        "required": [
+          "data",
+          "links"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "List of required documents.",
+            "items": {
+              "$ref": "#/components/schemas/RequiredDocument"
+            },
+            "example": [
+              {
+                "documentCode": "Mandate",
+                "documentName": "Mandate",
+                "documentFormats": [
+                  "pdf"
+                ]
+              },
+              {
+                "documentCode": "Passport",
+                "documentName": "Passport",
+                "documentFormats": [
+                  "pdf"
+                ]
+              }
+            ],
+            "minItems": 1
+          },
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {
+                "type": "string",
+                "nullable": true
+              },
+              "first": {
+                "type": "string",
+                "nullable": true
+              },
+              "last": {
+                "type": "string",
+                "nullable": true
+              },
+              "prev": {
+                "type": "string",
+                "nullable": true
+              },
+              "next": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequiredDocument": {
+        "type": "object",
+        "required": [
+          "documentCode",
+          "documentName",
+          "documentFormats"
+        ],
+        "properties": {
+          "documentCode": {
+            "type": "string",
+            "description": "Unique code of the document.",
+            "example": "Mandate"
+          },
+          "documentName": {
+            "type": "string",
+            "description": "Name of the document.",
+            "example": "Mandate"
+          },
+          "documentFormats": {
+            "type": "array",
+            "description": "Available formats for the document.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "pdf",
+                "docx",
+                "png",
+                "jpg"
+              ],
+              "example": "pdf"
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "documentCode": "Passport",
+          "documentName": "Passport",
+          "documentFormats": [
+            "pdf"
+          ]
+        }
+      },
+      "ApplicantPayload": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/MetaQueryModel"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "data": {
+            "applicantResidencyStatus": "SouthAfricanResident",
+            "applicantType": "Entity",
+            "taxClearanceIndicator": true,
+            "categoryCodes": [
+              {
+                "categoryCode": "260",
+                "subCategoryCodes": [
+                  "01",
+                  "02"
+                ]
+              }
+            ]
+          },
+          "meta": {}
+        }
+      },
+      "Data": {
+        "type": "object",
+        "required": [
+          "applicantResidencyStatus",
+          "applicantType",
+          "taxClearanceIndicator",
+          "categoryCodes"
+        ],
+        "properties": {
+          "applicantResidencyStatus": {
+            "type": "string",
+            "description": "Residency status of the applicant.",
+            "enum": [
+              "NonResident",
+              "ForeignTemporaryResident",
+              "SouthAfricanResident"
+            ],
+            "example": "SouthAfricanResident"
+          },
+          "applicantType": {
+            "type": "string",
+            "description": "Type of the applicant.",
+            "enum": [
+              "Individual",
+              "Entity"
+            ],
+            "example": "Entity"
+          },
+          "taxClearanceIndicator": {
+            "type": "boolean",
+            "description": "Indicator if tax clearance is obtained.",
+            "example": true
+          },
+          "categoryCodes": {
+            "type": "array",
+            "description": "List of category codes associated with the applicant.",
+            "items": {
+              "$ref": "#/components/schemas/CategoryCode"
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "applicantResidencyStatus": "SouthAfricanResident",
+          "applicantType": "Entity",
+          "taxClearanceIndicator": false,
+          "categoryCodes": [
+            {
+              "categoryCode": "260",
+              "subCategoryCodes": [
+                "01",
+                "02"
+              ]
+            }
+          ]
+        }
+      },
+      "CategoryCode": {
+        "type": "object",
+        "required": [
+          "categoryCode",
+          "subCategoryCodes"
+        ],
+        "properties": {
+          "categoryCode": {
+            "type": "string",
+            "description": "The main category code.",
+            "enum": [
+              "260",
+              "261",
+              "287",
+              "289",
+              "293",
+              "294",
+              "301",
+              "306",
+              "308",
+              "402",
+              "409",
+              "408",
+              "410",
+              "500",
+              "513",
+              "530",
+              "605",
+              "615"
+            ],
+            "example": "260"
+          },
+          "subCategoryCodes": {
+            "type": "array",
+            "description": "List of sub-category codes under the main category.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "01",
+                "02",
+                "03",
+                "04",
+                "05",
+                "06",
+                "07",
+                "08",
+                "09"
+              ],
+              "example": "01"
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "categoryCode": "260",
+          "subCategoryCodes": [
+            "01",
+            "02"
+          ]
+        }
+      },
       "ValidationProblemDetails": {
         "required": [
           "errors"
@@ -2873,6 +3238,28 @@
           }
         },
         "additionalProperties": {}
+      },
+      "FxRequiredDocumentsValidation": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       }
     },
     "securitySchemes": {

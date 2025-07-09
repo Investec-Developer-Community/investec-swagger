@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://api.investec.com",
+      "url": "http://openapi.investec.com",
       "description": "",
       "variables": {}
     }

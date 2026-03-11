@@ -4,17 +4,13 @@ This repository is your place to have your say on Investec's API Swagger documen
 
 We’d love for community members to jump in and help us improve them. If you have updates or suggestions, feel free to contribute! Our API team will review and, if everything checks out, add them to the official documents.
 
-## A podcast overview on all the Swagger docs 🎧
 
-<a href="audio/Investec%20API%20Specification%20Podcast.mp4">
-  <img src="audio/thumbnail.png" alt="Podcast Thumbnail" height="350">
-</a>
+## Structure
 
-[Download the podcast.](audio/Investec%20API%20Specification%20Podcast.mp4) [5mb | 21 min]
+- `swagger/` contains the canonical OpenAPI JSON files
+- `skills/` contains focused `SKILL.md` documents that reference those Swagger files
 
-## What's Inside? 📂
-
-This repository includes Swagger documents for:
+## Swagger Files
 
 - **SA PB Account Information**: Access personal and business banking accounts.
 - **SA Card Code**: Manage card-related functionalities.
@@ -32,14 +28,17 @@ This repository includes Swagger documents for:
 
 Keep an eye on this repository for the latest updates on our APIs and documentation.
 
-## Contributions Welcome! 🤝
+## Contributing
 
-Feel free to contribute by raising issues or submitting pull requests. Your input helps us improve and keep our documentation up-to-date.
+Submit pull requests for improvements to either:
 
-## Additional Resources 🌐
+1. The canonical files in `swagger/`
+2. The corresponding skill docs in `skills/`
+
+If a Swagger file changes, update the related `SKILL.md` so the guidance stays aligned.
+
+## Reference
 
 - **Official Documentation**: Visit [developer.investec.com](https://developer.investec.com) to see how to use these APIs with your existing Investec accounts.
 - **Community Sandbox**: Play around with our APIs in a community sandbox environment [here](https://github.com/Investec-Developer-Community/Community-Projects?tab=readme-ov-file#community-created-sandboxes).
-
-Thank you for choosing Investec's APIs. Together, we build better solutions! 🌟
 

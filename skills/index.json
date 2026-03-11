@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "skills": [
+    {
+      "name": "investec-auth-oauth",
+      "path": "skills/investec-auth-oauth/SKILL.md",
+      "tags": ["auth", "oauth2", "3-legged", "investec"],
+      "openapi": ["swagger/open-api-authorization-3-legged-oauth.json"]
+    },
+    {
+      "name": "investec-pb-account-info",
+      "path": "skills/investec-pb-account-info/SKILL.md",
+      "tags": ["pb", "accounts", "balances", "transactions"],
+      "openapi": ["swagger/sa-pb-account-information.json"]
+    },
+    {
+      "name": "investec-card-code",
+      "path": "skills/investec-card-code/SKILL.md",
+      "tags": ["card", "programmable", "card-code"],
+      "openapi": ["swagger/sa-card-code.json"]
+    },
+    {
+      "name": "investec-cib-account-info",
+      "path": "skills/investec-cib-account-info/SKILL.md",
+      "tags": ["cib", "bb", "accounts"],
+      "openapi": ["swagger/sa-cib-account-information.json"]
+    },
+    {
+      "name": "investec-ifi-intermediaries-core",
+      "path": "skills/investec-ifi-intermediaries-core/SKILL.md",
+      "tags": ["ifi", "intermediaries", "clients"],
+      "openapi": ["swagger/sa-cib-investec-for-intermediaries.json"]
+    },
+    {
+      "name": "investec-ifi-forex-bop",
+      "path": "skills/investec-ifi-forex-bop/SKILL.md",
+      "tags": ["ifi", "forex", "bop"],
+      "openapi": ["swagger/sa-cib-investec-for-intermediaries-foreign-exchange.json"]
+    }
+  ]
+}

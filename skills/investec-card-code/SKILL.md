@@ -1,12 +1,13 @@
 ---
 name: investec-card-code
 version: 0.1.0
-description: Investec SA Card Code helper. Covers card listing, programmable feature toggling, uploading code, publishing code, execution simulation, execution history, env vars, and reference data endpoints (countries/currencies/merchants).
+description: Investec SA Card Code helper. Covers card listing, virtual card creation, programmable feature toggling, uploading code, publishing code, execution simulation, execution history, env vars, and reference data endpoints (countries/currencies/merchants).
 tags: [investec, openapi, swagger, card, programmable, card-code]
 triggers:
   include:
     - "card code"
     - "programmable card"
+    - "virtual card"
     - "/za/v1/cards"
     - "publish"
     - "publishedcode"
@@ -61,9 +62,11 @@ Typical headers:
 
 ## Common workflows
 
-### 1) List cards / create card record
+### 1) List cards / create virtual card
 - `GET /za/v1/cards`
 - `POST /za/v1/cards`
+
+Create Virtual Card expects details such as `AccountNumber`, `EmbossName`, and `EmbossName2`.
 
 ### 2) Get/update a card
 - `GET /za/v1/cards/{cardKey}`
@@ -108,6 +111,7 @@ Treat these as secrets:
 - **403**: missing `cards` scope
 - **404**: wrong `cardKey`
 - **400**: invalid payload for code/env var/execute endpoints
+- **429**: rate limit exceeded
 
 ## Minimal curl example (execute simulation)
 ```bash

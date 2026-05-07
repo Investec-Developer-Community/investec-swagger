@@ -3,61 +3,67 @@
   "servers": [
     {
       "url": "https://openapi.investec.com",
-      "description": "",
-      "variables": {}
+      "description": "Production environment"
     }
   ],
   "info": {
     "version": "1.0.0",
-    "title": "SA Card Code",
-    "description": "# Introduction\n The Programmable Card API is a programmatic endpoint that manages Private Banking and Corporate Investment Banking cards. This API allows you to access and manage the following:\n- Cards\n- Deploy code\n- Run simulations\n- Manage environmental variables\n- Retrieve merchant codes\n- Retrieve currencies\n- Retrieve countries\n # Getting Started\nTo start using the Programmable Card API, you’ll need API credentials, which you can access in your [Investec Online Banking](https://login.secure.investec.com) profile. Create a new API key (x-api-key) with specified API scopes. Remember to include the *cards* scope\n\n## Run with Postman\n[Open the collection in postman](https://www.postman.com/investec-open-api/workspace/programmable-banking/collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=share&creator=26868804)  \nor fork  \n[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=collection%2Ffork&collection-url=entityId%3D26868804-00260d55-0009-42ee-b148-d439992e64ff%26entityType%3Dcollection%26workspaceId%3D905c2bab-81a1-4297-8b70-2456c776a7a0)\n\nThe instructions below will guide you through the process of authenticating in the Postman app: \n1. Set the verb to POST and enter the auth URL [https://openapi.investec.com/identity/v2/oauth2/token](https://openapi.investec.com/identity/v2/oauth2/token) as the request URL.\n2. The endpoint receives your client ID and client secret as [BASIC](https://en.wikipedia.org/wiki/BASIC) authentication headers. Select the Authorization tab and select BASIC AUTH from the Type list.\n3. Enter your client_ID into the USERNAME field and your secret into the PASSWORD field \n4. Select the Headers tab and enter the “x-api-key” into the KEY field\n5. Enter your API key into the VALUE field\n6. Select the Body tab and select the x-www-form-urlencoded option\n7. Enter grant_type into the KEY field and client_credentials into the VALUE field.\n8. Send off your request.\n\nIf your keys are valid, the response will contain an access token and the number of seconds the access token is valid. \nSample response:\n```json\n{\n    \"access_token\": \"Z1CRQarGOSogNuUhRlENi5iKAGqh”,\n    \"token_type\": \"Bearer\",\n    \"expires_in\": 1799,\n    \"scope\": \"accounts\"\n}\n```\n\n# Authentication\n1. OAuth 2.0 access tokens are used to authenticate requests. Your access token authorises you to use the Programmable Card API.\n2. To call the API, you must exchange your client ID, secret and API (x-api-key) key for an access token. \n3. You need to include the access token in the Authorisation header with the designation bearer when making calls to the API\n4. The access token returned during the authentication request is valid for 30 minutes, at which point it will expire, and you will need to request a new one by calling /identity/v2/oauth2/token again.\n\nWhen you make calls to the API, include the access token in the Authorisation header with the designation as Bearer. \n<SecurityDefinitions />",
+    "title": "Card API",
+    "description": "# Overview \n The Card API enables you to programmatically manage **Private Banking**, **Business & Commercial**, and **Corporate** banking cards. With this API, you can:\n- Get a list of your cards and card details \n- Create virtual cards\n- Get the code that is published to your cards \n- Save and publish new code to your cards\n- Run card simulations to test saved code \n- Check logs of simulated and real transactions on your cards \n- Manage environmental variables\n- Get a reference set of merchant codes\n- Get a reference set of currencies and countries and the associated codes.\n # Authentication\n\n <details><summary><strong> View Authentication details</strong></summary> \n\n- Investec API authentication uses **OAuth 2.0 client credentials** (`client_id` and `client_secret`), with the addition of an `x-api-key`. \n- Log in to Investec Online to obtain your `client_id` and `client_secret` and to generate your `x-api-key` with the scopes you require.\n\n **1. Get an access token**\n\n- To get an access token, you must exchange your `client_id`, `client_secret` and `x-api-key` for the token \n\n```bash\ncurl --location 'https://openapi.investec.com/identity/v2/oauth2/token' \\\n--header 'x-api-key: <<your_api_key>>' \\\n--header 'Authorization: Basic <<base64(client_id:client_secret)>>' \\\n--header 'Content-Type: application/x-www-form-urlencoded' \\\n--data-urlencode 'grant_type=client_credentials'\n```\n\n**Headers explained:**\n- `x-api-key`: API key generated on Investec Online\n- `Authorization`: Base64-encoded `client_id:client_secret`. Take your `client_id` and `client_secret` and base64 encode them to provide a value for basic authorization.\n- `Content-Type`: Indicates the request body format\n\n**2. Use the token for all API requests**\n\n- Use the access token that you receive in all subsequent API requests \n- Access tokens are **valid for 30 minutes** and must be refreshed when expired \n\n```bash\ncurl --location 'https://openapi.investec.com/...' \\\n--header 'Authorization: Bearer <<your_access_token>>'\n```\n\n **Notes**\n- Ensure your API key has the required scopes - you can set these when you create the key on Investec Online.\n\n</details>\n\n # Quickstarts \n\n<details>\n<summary><strong>View Quickstart (cURL)</strong></summary>\n\n This Quickstart walks you through making your first successful API call to the Card API. By the end of this guide, you will: \n- Authenticate using OAuth 2.0 client credentials and your x-api-key \n- Call the Get Cards endpoint \n- Receive an HTTP 200 OK response with a list of cards linked to your profile \n\n **Before you start** \n\n Make sure you have the following: \n\n- An Investec profile that is activated for Investec Developer on Investec Online \n- You have your client-Id and client-secret from Investec Online and you have created an x-api-key with the **cards** scope. \n- An API client such as Postman, Curl or your own application code.\n\n **Step 1: Get an access token**\n\n The Card API uses OAuth 2.0 with the client credentials grant type. To get a bearer token, exchange your client_id, client_secret, and x-api-key for an access token. \n\n You must include:\n\n- HTTP Basic Auth using client_id:client_secret  \n- Your x-api-key \n- grant_type= client_credentials \n\n **Token request**\n\n```bash\ncurl --location 'https://openapi.investec.com/identity/v2/oauth2/token' \\\n--header 'x-api-key: <<your api_key>>' \\\n--header 'Accept: application/json' \\\n--header 'Content-Type: application/x-www-form-urlencoded' \\\n--header 'Authorization: Basic <<client_id:client_secret>>' \\\n--data-urlencode 'grant_type=client_credentials'\n```\n\n **What this does**\n\n- Authenticates your application \n- Returns a short-lived access token called a bearer token (valid for 30 minutes) \n- Confirms your credentials and API key are valid \n\n **Successful response example** \n\n```json\n{\n  \"access_token\": \"qwertyuiop123456789\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 1799,\n  \"scope\": \"cards\"\n}\n```\n\n **Step 2: Get your cards** \n\n Once you have your bearer token, call the Get Cards endpoint: GET/za/v1/cards\n\n **Request example**  \n\n```bash\ncurl --location 'https://openapi.investec.com/za/v1/cards' \\\n--header 'Accept: application/json' \\\n--header 'Authorization: Bearer <<your_access_token>>'\n```\n\n **What a successful call looks like**\n\n If everything is set up correctly, you will receive HTTP 200 OK and a JSON response containing the cards associated with your account. \n\n **Successful response example**\n```json\n{\n  \"data\": {\n    \"cards\": [\n      {\n        \"CardKey\": \"1010101\",\n        \"CardNumber\": \"402167XXXXXX1111\",\n        \"IsProgrammable\": true,\n        \"Status\": \"Active\",\n        \"CardTypeCode\": \"VGC\",\n        \"AccountNumber\": \"10011001100\",\n        \"AccountId\": \"177778438355553632224\"\n      }\n    ]\n  },\n  \"links\": {\n    \"self\": \"https://openapi.investec.com/za/v1/cards\"\n  },\n  \"meta\": {\n    \"totalPages\": 1\n  }\n}\n```\n **This confirms that:** \n- Your authentication flow is working \n- Your API key has the correct scope \n- You can successfully access Card API data.\n\n **Step 3: How to debug your first call** \n\n **Common issues on a first call**\n\n| Issue | Guidance |\n|-------|----------|\n| Token request fails | Ensure you are using HTTP Basic Auth and that the x-api-key is included |\n| 401 response | Check that your credentials are correct |\n| 403 response | Confirm your API key includes the `cards` scope |\n\n</details>\n\n\n<details>\n<summary><strong>View Quickstart (Postman)</strong></summary>\n\n[Open the collection in postman](https://www.postman.com/investec-open-api/programmable-banking/collection/hl5nm0u/investec-programmable-card)  \n[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/bd209d71-564d-4379-b464-a8f75dd84db8?action=collection%2Ffork&collection-url=entityId%3Dbd209d71-564d-4379-b464-a8f75dd84db8%26entityType%3Dcollection%26workspaceId%3D905c2bab-81a1-4297-8b70-2456c776a7a0)\n\n\n\n The instructions below will guide you through the process of authenticating and getting your cards in Postman. Before you start, **fork** the appropriate collection, and work on the fork now available in My Workspace. \n\n **1. Authenticate** \n\n 1. Head over to the **Variables** tab to set your environment variables \n2. Insert your client ID, client secret, and x-api-key. \n\n3. Navigate to the Auth folder, and the POST Authentication query (URL: https://openapi.investec.com/identity/v2/oauth2/token). \n\n- Under **Authorization**: The Auth type is set to Basic Auth \n- Under **Headers**: Your headers include the x-api-key header which uses the key you just filled in. \n- Under **Body**: In the request body, the grant-type field has the value client_credentials \n 4. Hit send on the request.  \n\n In response to your client id, secret and x-api-key, the endpoint will respond with a secure token, called a bearer token, and the period for which the token is valid (30 minutes).\n\n Navigate back to the Variables table and **paste your token into the token field**. \n\n **2. Get your cards** \n\n 1. Navigate to the Cards folder and the GET Cards \n\n 2. Hit send to make a call to the Cards API endpoint (no additional parameters need to be set) \n\n The JSON response will include the cards associated with your account, including information such as the cardKey, card number, status, and card type.\n\n</details>\n\n # Release notes \n\n<details><summary><strong>Description of API changes</strong></summary>\n\n To be added\n\n</details>",
     "termsOfService": "https://developer.investec.com/terms-of-use",
-    "contact": {},
-    "license": {
-      "name": ""
+    "contact": {
+      "name": "Investec Developer Support",
+      "email": "developer@investec.com"
     }
   },
   "tags": [
     {
       "name": "Card management",
-      "description": "Get a list of cards as well as retrieving the card information. Also included is the ability to create virtual cards"
+      "description": "Get a list of cards along with detailed card information, and create virtual cards programmatically."
     },
     {
       "name": "Card code management",
-      "description": "Retrieve and maintain the code on the specific card, including testing and viewing logs"
+      "description": "Get and update the code associated with a specified card, including the ability to test changes and view execution logs."
     },
     {
       "name": "Card environmental variables",
-      "description": "Retrieve and maintain the user defined environmental variables. Note: the variables are read-only when the card code is executed"
+      "description": "Get and update user defined environmental variables. \n\n Examples of environment variables: \n- The public and private keys used to get sensitive card information \n- Account details for third-party services you are using in your build.  \n\n **Note**: Environment variables are read-only when the card code is executed."
     },
     {
       "name": "Toggle",
-      "description": "Ability to toggle whether the code on the card will be executed"
+      "description": "Enable or disable the execution of code on a card. This is the equivalent of toggling your card on/off for Programmable Banking on Investec Online."
     },
     {
       "name": "Reference data",
-      "description": "Utility endpoints that expose the reference data that contained in the response data"
+      "description": "Get reference data used within API responses, such as merchant, currency, and country codes."
     }
   ],
   "paths": {
     "/za/v1/cards": {
       "get": {
         "summary": "Get Cards",
-        "description": "Obtain cards associated with the account.",
+        "description": "Get cards associated with a specified account.",
         "operationId": "GetCards",
         "tags": [
           "Card management"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "x-code-samples": [
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards' \n --header 'Authorization: Bearer {yourBearerToken}'"
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards' \n --header 'Authorization: Bearer {yourBearerToken}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "GET /za/pb/v1/cards HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+            "source": "GET /za/v1/cards HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
           }
         ],
         "responses": {
@@ -75,7 +81,9 @@
                         "Status": "Active",
                         "CardTypeCode": "VGC",
                         "AccountNumber": "10011001100",
-                        "AccountId": "177778438355553632224"
+                        "AccountId": "177778438355553632224",
+                        "EmbossedName": "JOHN SMITH",
+                        "IsVirtualCard": false
                       },
                       {
                         "CardKey": "1020202",
@@ -84,7 +92,9 @@
                         "Status": "Active",
                         "CardTypeCode": "VGC",
                         "AccountNumber": "10011001100",
-                        "AccountId": "177778438355553632224"
+                        "AccountId": "177778438355553632224",
+                        "EmbossedName": "JANE DOE",
+                        "IsVirtualCard": true
                       },
                       {
                         "CardKey": "1030303",
@@ -93,12 +103,14 @@
                         "Status": "Active",
                         "CardTypeCode": "VGC",
                         "AccountNumber": "10011001100",
-                        "AccountId": "177778438355553632224"
+                        "AccountId": "177778438355553632224",
+                        "EmbossedName": "JOHN DOE",
+                        "IsVirtualCard": false
                       }
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards"
                   },
                   "meta": {
                     "totalPages": 1
@@ -129,10 +141,17 @@
       },
       "post": {
         "summary": "Create Virtual Card",
-        "description": "Create a virtual card associated with the specified account.",
+        "description": "Create a virtual card associated with a specified account.",
         "operationId": "CreateVirtualCard",
         "tags": [
           "Card management"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "x-code-samples": [
           {
@@ -161,7 +180,7 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards"
                   },
                   "meta": {
                     "totalPages": 1
@@ -194,16 +213,23 @@
     "/za/v1/cards/{cardKey}": {
       "get": {
         "summary": "Get Card Detail",
-        "description": "Retrieve card detail excluding sensitive information.",
+        "description": "Get card details, excluding sensitive information, such as card number, expiry date and CVV.",
         "operationId": "GetCardDetail",
         "tags": [
           "Card management"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -214,12 +240,12 @@
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/212121' \n --header 'Authorization: Bearer {yourBearerToken}'"
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/212121' \n --header 'Authorization: Bearer {yourBearerToken}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "GET /za/pb/v1/cards/212121 HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
+            "source": "GET /za/v1/cards/212121 HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
           }
         ],
         "responses": {
@@ -241,7 +267,7 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}"
                   },
                   "meta": {
                     "totalPages": 1
@@ -272,16 +298,23 @@
       },
       "post": {
         "summary": "Get Card Detail (With Sensitive Information)",
-        "description": "Get the detail of a card including full card number, cvv and expiry date\nNote on usage \n- In order to retrieve sensitive information on the card you have to supply details regarding a RSA Public key that gets created client side. We will encrypt the sensitive information at the lowest level with the specified public key information.  \n- In order to view the information in the extended property you would need to decrypt it with the Private key created in the preceding step.  \n\n| Area                   | Value     |\n| :------                | :-------  |\n| Encryption Algorithm   | RSA       |\n| Key Size               | 2048      |",
+        "description": "Get full card details, including card number, expiry date and CVV.\n\n **A note on usage:** \n- To retrieve sensitive card data, you must first generate an RSA key pair on an app of your choice. \n- Next, provide your RSA public key in the request, along with: \n  - `modulus` and `exponent` (public key components)\n  - `appName` (the application used to generate the key pair). \n\n Once you have sent the request, the API will: \n- Encrypt the card number, expiry date, and CVV using your public key \n- Return the encrypted values in `ExtendedDetails`. \n You can then decrypt these values locally using your private key. \n\n| Area                   | Value     |\n| :------                | :-------  |\n| Encryption Algorithm   | RSA       |\n| Key Size               | 2048      |",
         "operationId": "GetCardDetailSensitive",
         "tags": [
           "Card management"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -290,7 +323,7 @@
           {
             "in": "query",
             "name": "extended",
-            "description": "Set to true in to retrieve extended sensitive card information",
+            "description": "Set to true to retrieve extended sensitive card information",
             "required": true,
             "example": true,
             "schema": {
@@ -319,15 +352,15 @@
                 "properties": {
                   "keyId": {
                     "type": "number",
-                    "description": "Number to identify your key"
+                    "description": "A number to identify your key"
                   },
                   "identifier": {
                     "type": "string",
-                    "description": "What you identify your key with"
+                    "description": "A name to identify your key with"
                   },
                   "appName": {
                     "type": "string",
-                    "description": "App name of the application that generate the RSA Key Pair"
+                    "description": "Name of the application that generated the RSA Key Pair"
                   },
                   "modulus": {
                     "type": "string",
@@ -372,11 +405,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}?extended=true"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CardDetails"
                 }
               }
             }
@@ -406,12 +442,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Obtain code currently saved to the specific card.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Get code currently **saved** to a specified card.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -422,12 +465,12 @@
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}'"
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "GET /za/pb/v1/cards/{cardKey}/code HTTP/1.1 \n  Host: openapi.investec.com \n Authorization: Bearer {yourBearerToken}"
+            "source": "GET /za/v1/cards/{cardKey}/code HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}"
           }
         ],
         "responses": {
@@ -447,11 +490,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/code"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionCode"
                 }
               }
             }
@@ -479,12 +525,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Save specified code to the specific card. Note: This allows you to save/stage the code to the card without publishing it. This implies that the code will not execute when a card transaction occurs.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Save code to the specified card. \n\n **Note**: This allows you to save/stage the code to the card without publishing it. The code will not execute when a card transaction occurs, unless you publish it.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -495,12 +548,12 @@
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapi.investec.com/za/pb/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data '{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}'"
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/code' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data '{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "POST /za/pb/v1/cards/{cardKey}/code HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
+            "source": "POST /za/v1/cards/{cardKey}/code HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
           }
         ],
         "requestBody": {
@@ -538,11 +591,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/code"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionCode"
                 }
               }
             }
@@ -572,12 +628,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Obtain code currently published to the specific card.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Get code currently **published** to a specified card.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -613,11 +676,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/publishedcode"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionCode"
                 }
               }
             }
@@ -647,12 +713,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Publish specified code to the specific card. *Note: This will mark the saved code as the published code ready for execution. Remember to specify the {codeid} obtained from the Get Function (saved) code.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Publish code to the specified card. \n\n **Note**: This will mark the saved code as the published code ready for execution. Remember to specify the {codeid} obtained from the Get Function (saved) code.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -668,7 +741,7 @@
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "POST /za/pb/v1/cards/{cardKey}/publish HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"codeid\": \"C39D51E7-588B-4296-BFFD-B7383FE3A1B9\",\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
+            "source": "POST /za/v1/cards/{cardKey}/publish HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\"codeid\": \"C39D51E7-588B-4296-BFFD-B7383FE3A1B9\",\"code\": \"//Sample code to just log \\n const beforeTransaction = async (authorization) => { \\n var transaction = authorization; \\n console.log(transaction); \\n return true; \\n }; \\n const afterTransaction = async (transaction) => { \\n console.log(transaction); \\n};\"}"
           }
         ],
         "requestBody": {
@@ -710,11 +783,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/publish"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/FunctionCode"
                 }
               }
             }
@@ -744,12 +820,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Publish specified code to the specific card. Note: This allows you to push code to the specified card. After successfully publishing the code it will execute the next time a card transaction occurs.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Execute your code in sandbox mode. Provide mock transaction data in the request body and run your code to simulate a response.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -865,11 +948,14 @@
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/code/execute"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResults"
                 }
               }
             }
@@ -899,12 +985,19 @@
         "tags": [
           "Card code management"
         ],
-        "description": "Fetches the logs of the simulated as well as the actual transactions for the specific card.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Fetches the logs of the simulated as well as the actual transactions for the specified card.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -978,11 +1071,14 @@
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/code/executions"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResults"
                 }
               }
             }
@@ -1012,12 +1108,19 @@
         "tags": [
           "Card environmental variables"
         ],
-        "description": "Gets the key value pairs of user defined variables securely stored against a specific card.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Gets the key value pairs of user defined variables securely stored against a specified card.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The CardKey obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1051,11 +1154,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/environmentvariables"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentVariables"
                 }
               }
             }
@@ -1083,12 +1189,19 @@
         "tags": [
           "Card environmental variables"
         ],
-        "description": "Sets the environment variables stored against a specific card. Note: This replaces all variables and does not allow for patching.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Sets the environment variables stored against a specified card. \n\n **Note:** This replaces all variables and does not allow for patching.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1125,11 +1238,14 @@
                     }
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/{cardKey}/environmentvariables"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentVariables"
                 }
               }
             }
@@ -1155,7 +1271,19 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "string",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "variables": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "variables"
+                ],
                 "example": {
                   "variables": {
                     "test1": "value11",
@@ -1175,12 +1303,19 @@
         "tags": [
           "Toggle"
         ],
-        "description": "Toggle the programmable feature for a specific card.",
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
+        ],
+        "description": "Enable or disable the programmable feature for a specified card.",
         "parameters": [
           {
             "in": "path",
             "name": "cardKey",
-            "description": "The CardKey obtained from the get cards call.",
+            "description": "The unique identifier for the card, obtained from the GET Cards call.",
             "required": true,
             "schema": {
               "type": "string"
@@ -1191,12 +1326,12 @@
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/toggle-programmable-feature' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n--data'{\n    \"Enabled\": false\n}' "
+            "source": "curl --location 'https://openapi.investec.com/za/v1/cards/{cardKey}/toggle-programmable-feature' \n --header 'Authorization: Bearer {yourBearerToken}' \n --header 'Content-Type: application/json' \n --data '{\n  \"Enabled\": false\n}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "POST /za/v1/cards/{cardKey}/toggle-programmable-feature HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{    \n\"variables\": '{\n    \"Enabled\": false\n}'"
+            "source": "POST /za/v1/cards/{cardKey}/toggle-programmable-feature HTTP/1.1 \nHost: openapi.investec.com \nAuthorization: Bearer {yourBearerToken}\nContent-Type: application/json\n{\n  \"Enabled\": false\n}"
           }
         ],
         "responses": {
@@ -1206,6 +1341,9 @@
               "application/json": {
                 "example": {
                   "Enabled": false
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ToggleProgrammableFeature"
                 }
               }
             }
@@ -1231,7 +1369,16 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "string",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "Enabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "Enabled"
+                ],
                 "example": {
                   "Enabled": false
                 }
@@ -1247,6 +1394,13 @@
         "operationId": "GetCountries",
         "tags": [
           "Reference data"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "parameters": [],
         "description": "Gets a reference set of countries.",
@@ -1285,11 +1439,14 @@
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/countries"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Countries"
                 }
               }
             }
@@ -1318,6 +1475,13 @@
         "operationId": "GetCurrencies",
         "tags": [
           "Reference data"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "parameters": [],
         "description": "Gets a reference set of currencies.",
@@ -1360,11 +1524,14 @@
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/currencies"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Currencies"
                 }
               }
             }
@@ -1393,6 +1560,13 @@
         "operationId": "GetMerchants",
         "tags": [
           "Reference data"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "cards"
+            ]
+          }
         ],
         "parameters": [],
         "description": "Get a reference set of merchant category codes and descriptions.",
@@ -1431,11 +1605,14 @@
                     ]
                   },
                   "links": {
-                    "self": null
+                    "self": "https://openapi.investec.com/za/v1/cards/merchants"
                   },
                   "meta": {
                     "totalPages": 1
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/Merchants"
                 }
               }
             }
@@ -1461,13 +1638,12 @@
   },
   "components": {
     "securitySchemes": {
-      "Oauth2": {
-        "description": "",
+      "OAuth2": {
+        "description": "OAuth2.0 security scheme for production environment, with the addition of an x-api-key as a header. Remember to include grant_type: client_credentials (x-www-form-urlencoded) in the body of the request.",
         "type": "oauth2",
         "flows": {
           "clientCredentials": {
             "tokenUrl": "https://openapi.investec.com/identity/v2/oauth2/token",
-            "x-api-key": "dWJHTHUxY1MzUnRjV3NzN29pWkpjNUZEbjhQaHhYUUw6N0YwRkNEQzgzQUE5MzdDQkNDMzhCMkU4ODQ2OUI1NzQ2MTQ1NTlENzgzQjRCMDhFRDBGMTY5NzQ5ODQzQjk1Qg==",
             "scopes": {
               "cards": "Programmable banking card functionality"
             }
@@ -1537,16 +1713,19 @@
         "properties": {
           "CardKey": {
             "type": "string",
-            "format": "integer"
+            "description": "A unique identifier for the card, used in other API calls to reference the card."
           },
           "IsVirtualCard": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the card is a virtual card."
           },
           "EmbossName": {
-            "type": "string"
+            "type": "string",
+            "description": "The name embossed on the card."
           },
           "EmbossName2": {
-            "type": "string"
+            "type": "string",
+            "description": "The second name embossed on the card."
           }
         },
         "required": [
@@ -1579,31 +1758,39 @@
         "properties": {
           "CardKey": {
             "type": "string",
-            "format": "integer"
+            "description": "A unique identifier for the card, used in other API calls to reference the card."
           },
           "CardNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "The card number. This is masked for security reasons, and only the last 4 digits are returned."
           },
           "IsProgrammable": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the card is enabled for programmable banking. This can be toggled on/off using the toggle endpoint."
           },
           "Status": {
-            "type": "string"
+            "type": "string",
+            "description": "The status of the card. Possible values are Active (used in the last 3 months), Inactive (not used in last 3 months), Dormant (not used in last 6 months), Closed, New (no transactions on the card yet), and Temporary Block."
           },
           "CardTypeCode": {
-            "type": "string"
+            "type": "string",
+            "description": "The card type code. Possible values are VBC (Visa Business Chip Card), VGC (Visa Global Card), VPC (Enigma Chip card), VDP (Visa Debit Platinum), VBJ (Visa Business Journey), VCC (Visa Corporate), VVB (Visa Virtual Business), VVC (Visa Virtual Corporate), VVD (Visa Virtual Debit), VVG (Visa Platinum Virtual) and VVP (Visa Virtual Enigma)"
           },
           "AccountNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "The account number associated with the card."
           },
           "AccountId": {
-            "type": "string"
+            "type": "string",
+            "description": "A unique identifier for the account associated with the card."
           },
           "EmbossedName": {
-            "type": "string"
+            "type": "string",
+            "description": "The name embossed on the card."
           },
           "IsVirtualCard": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the card is a virtual card."
           }
         },
         "required": [
@@ -1659,28 +1846,48 @@
         "properties": {
           "CardKeyHash": {
             "type": "string",
-            "format": "integer"
+            "description": "A hashed cardKey value."
           },
           "MaskedCardNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "A masked card number - only the last 4 digits are returned."
           },
           "EmbossName": {
-            "type": "string"
+            "type": "string",
+            "description": "The first name embossed on the card."
           },
           "EmbossName2": {
-            "type": "string"
+            "type": "string",
+            "description": "The second name embossed on the card."
           },
           "Status": {
-            "type": "string"
+            "type": "string",
+            "description": "The status of the card. Possible values are Active (used in the last 3 months), Inactive (not used in last 3 months), Dormant (not used in last 6 months), Closed, New (no transactions on the card yet), and Temporary Block."
           },
           "AccountNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "The account number associated with the card."
           },
           "IsVirtualCard": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the card is a virtual card."
           },
           "ExtendedDetails": {
-            "type": "null"
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": false,
+            "properties": {
+              "CardNumber": {
+                "type": "string"
+              },
+              "ExpiryDate": {
+                "type": "string"
+              },
+              "CVV2": {
+                "type": "string"
+              }
+            },
+            "description": "Extended details about the card. This will need to be decrypted with your private key."
           }
         },
         "required": [
@@ -1695,12 +1902,447 @@
         ],
         "title": "Result"
       },
+      "FunctionCode": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FunctionCodeData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "FunctionCode"
+      },
+      "FunctionCodeData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/FunctionCodeResult"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "FunctionCodeResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "codeId": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "codeId",
+          "code",
+          "createdAt",
+          "updatedAt",
+          "publishedAt",
+          "error"
+        ],
+        "title": "Result"
+      },
+      "ExecutionResults": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ExecutionResultsData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "ExecutionResults"
+      },
+      "ExecutionResultsData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExecutionResult"
+            }
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "ExecutionResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "executionId": {
+            "type": "string"
+          },
+          "rootCodeFunctionId": {
+            "type": "string"
+          },
+          "sandbox": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "authorizationApproved": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExecutionLog"
+            }
+          },
+          "smsCount": {
+            "type": "integer"
+          },
+          "emailCount": {
+            "type": "integer"
+          },
+          "pushNotificationCount": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "executionId",
+          "rootCodeFunctionId",
+          "sandbox",
+          "type",
+          "authorizationApproved",
+          "logs",
+          "smsCount",
+          "emailCount",
+          "pushNotificationCount",
+          "createdAt",
+          "startedAt",
+          "completedAt",
+          "updatedAt",
+          "Error"
+        ],
+        "title": "Result"
+      },
+      "ExecutionLog": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "createdAt",
+          "level",
+          "content"
+        ],
+        "title": "Log"
+      },
+      "EnvironmentVariables": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/EnvironmentVariablesData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "EnvironmentVariables"
+      },
+      "EnvironmentVariablesData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/EnvironmentVariablesResult"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "EnvironmentVariablesResult": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "variables",
+          "createdAt",
+          "updatedAt",
+          "error"
+        ],
+        "title": "Result"
+      },
+      "ToggleProgrammableFeature": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "Enabled"
+        ],
+        "title": "ToggleProgrammableFeature"
+      },
+      "Countries": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CountriesData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "Countries"
+      },
+      "CountriesData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Country"
+            }
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "Country": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Code": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "Code",
+          "Name"
+        ],
+        "title": "Country"
+      },
+      "Currencies": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CurrenciesData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "Currencies"
+      },
+      "CurrenciesData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Currency"
+            }
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "Currency": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Code": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "Code",
+          "Name"
+        ],
+        "title": "Currency"
+      },
+      "Merchants": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MerchantsData"
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "links",
+          "meta"
+        ],
+        "title": "Merchants"
+      },
+      "MerchantsData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Merchant"
+            }
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Data"
+      },
+      "Merchant": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "Code": {
+            "type": "string"
+          },
+          "Name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "Code",
+          "Name"
+        ],
+        "title": "Merchant"
+      },
       "Links": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "self": {
-            "type": "null"
+            "type": "string"
           }
         },
         "required": [
@@ -1723,15 +2365,7 @@
       }
     }
   },
-  "security": [
-    {
-      "Oauth2": [
-        "cards"
-      ]
-    }
-  ],
   "externalDocs": {
-    "url": "https://developer.investec.com/za/api-products",
-    "description": "Investec developer portal - API Products"
+    "url": "https://developer.investec.com/docs"
   }
 }

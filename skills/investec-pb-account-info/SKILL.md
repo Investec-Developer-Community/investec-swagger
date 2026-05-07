@@ -1,7 +1,7 @@
 ---
 name: investec-pb-account-info
 version: 0.1.0
-description: Investec SA Private Banking Account Information helper. Covers accounts, balances, transactions (incl pending), beneficiaries, payments (paymultiple), transfers (transfermultiple), profiles, and documents endpoints.
+description: Investec SA Private Banking Account Information helper. Covers accounts, balances, transactions (including includePending), beneficiaries, payments (paymultiple), account-scoped transfers (transfermultiple), profiles, and documents endpoints.
 tags: [investec, openapi, swagger, pb, private-banking, accounts, transactions, payments]
 triggers:
   include:
@@ -12,6 +12,7 @@ triggers:
     - "balance"
     - "transactions"
     - "pending-transactions"
+    - "includepending"
     - "beneficiaries"
     - "paymultiple"
     - "transfermultiple"
@@ -67,22 +68,26 @@ Typical request headers:
 ### 3) Get transactions
 - `GET /za/pb/v1/accounts/{accountId}/transactions`
 
-Tip: use date filters if available in your client pattern (even if not required) to keep responses small.
+Useful query params:
+- `fromDate`
+- `toDate`
+- `transactionType`
+- `includePending=true` (include pending items in the transactions feed)
 
 ### 4) Get pending transactions
 - `GET /za/pb/v1/accounts/{accountId}/pending-transactions`
 
 ### 5) Profiles and profile accounts
 - `GET /za/pb/v1/profiles`
-- `GET /za/pb/v1/profiles/{profileid}/accounts`
+- `GET /za/pb/v1/profiles/{profileId}/accounts`
 
 ### 6) Authorisation setup details (important for payments/approvals)
-- `GET /za/pb/v1/profiles/{profileid}/accounts/{accountid}/authorisationsetupdetails`
+- `GET /za/pb/v1/profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails`
 
 ### 7) Beneficiaries (global and profile-scoped)
 - `GET /za/pb/v1/accounts/beneficiaries`
 - `GET /za/pb/v1/accounts/beneficiarycategories`
-- `GET /za/pb/v1/profiles/{profileid}/accounts/{accountid}/beneficiaries`
+- `GET /za/pb/v1/profiles/{profileId}/accounts/{accountId}/beneficiaries`
 
 ### 8) Payments (batch)
 - `POST /za/pb/v1/accounts/{accountId}/paymultiple`
@@ -92,11 +97,9 @@ Notes:
 - Treat payment calls as “high stakes”: validate payloads carefully and handle partial failures.
 
 ### 9) Transfers (batch)
-Swagger exposes both:
-- `POST /za/pb/v1/accounts/transfermultiple`
 - `POST /za/pb/v1/accounts/{accountId}/transfermultiple`
 
-Choose based on whether you’re initiating transfers from a specific account context.
+Use the account-scoped transfer endpoint; the legacy V1 transfer-multiple endpoint has been removed from the PB spec.
 
 ### 10) Documents / statements
 - `GET /za/pb/v1/accounts/{accountId}/documents`

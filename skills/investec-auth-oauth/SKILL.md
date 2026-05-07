@@ -11,8 +11,10 @@ triggers:
     - "auth code"
     - "authorize url"
     - "consent"
+    - "/identity/v2/oauth2/authorize"
     - "access token"
     - "refresh token"
+    - "response_type=code"
     - "client_credentials"
     - "grant_type"
     - "x-api-key"
@@ -28,7 +30,9 @@ inputs:
   required:
     - client_id
     - client_secret
+  optional:
     - api_key
+    - redirect_uri
 outputs:
   produces:
     - endpoint_guidance
@@ -52,7 +56,7 @@ Does not cover third-party identity providers.
 ## What you'll need
 - `client_id`
 - `client_secret`
-- `x-api-key`
+- `x-api-key` (required for client_credentials token request)
 - redirect URI (3-legged only)
 - required scopes (product-specific)
 
@@ -92,7 +96,6 @@ Use when a user must consent and the app acts on that user's behalf.
 - `POST /identity/v2/oauth2/token`
 - Headers:
   - `Authorization: Basic base64(client_id:client_secret)`
-  - `x-api-key: <api_key>`
   - `Content-Type: application/x-www-form-urlencoded`
 - Body:
   - `grant_type=authorization_code`
@@ -103,10 +106,16 @@ The `redirect_uri` must match exactly.
 
 ### Step 3: Refresh token
 - `POST /identity/v2/oauth2/token`
-- Headers: same as above
+- Headers:
+  - `Authorization: Basic base64(client_id:client_secret)`
+  - `Content-Type: application/x-www-form-urlencoded`
 - Body:
   - `grant_type=refresh_token`
   - `refresh_token=<refresh_token>`
+
+## Spec quirks to normalize
+- The swagger currently contains duplicate token path keys with trailing spaces for the 3-legged flows.
+- Use the canonical endpoint path `/identity/v2/oauth2/token` for all token operations.
 
 ## Common failure modes
 - `400 Bad Request`: wrong `grant_type`, missing form fields, or redirect URI mismatch

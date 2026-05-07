@@ -3,32 +3,27 @@
   "servers": [
     {
       "url": "https://openapi.investec.com",
-      "description": "Production environment",
-      "variables": {}
+      "description": "Production environment"
     },
     {
       "url": "https://openapisandbox.investec.com",
-      "description": "Sandbox environment",
-      "variables": {}
+      "description": "Sandbox environment"
     }
   ],
   "info": {
     "version": "1.0.0",
-    "title": "SA PB Account Information",
-    "description": "# Introduction\nThe Investec Private Banking API is a set of programmatic endpoints that can access Private Bank personal and business banking accounts. This API allows you to access the following:\n- Accounts\n- Balances\n- Transactions\n- Beneficiaries\n- Beneficiary Payments\n- Account Transfers\n- Documents\n\nThere are many possible use cases for the Account Information API: from extracting the data to aggregate it with financial data from other banking institutions to personal money management tools. \n\n# Getting Started\nTo start using the Programmable Card API, you'll need API credentials, which you can access in your [Investec Online Banking](https://login.secure.investec.com) profile. Create a new API key (x-api-key) with specified API scopes. Remember to include the *cards* scope\n\nOptionally, use the Investec Sandbox account and credentials to generate mock responses to test your applications. You can use the Sandbox account without opening an Investec Private Bank account. \n\n## Run with Postman\n[Open the collection in postman](https://www.postman.com/investec-open-api/workspace/programmable-banking/collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=share&creator=26868804)  \nor fork  \n[![Run in Postman](https://run.pstmn.io/button.svg)](https://god.gw.postman.com/run-collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=collection%2Ffork&collection-url=entityId%3D26868804-00260d55-0009-42ee-b148-d439992e64ff%26entityType%3Dcollection%26workspaceId%3D905c2bab-81a1-4297-8b70-2456c776a7a0)\n\nThe instructions below will guide you through the process of authenticating in the Postman app: \n1. Set the verb to POST and enter the auth URL [https://openapi.investec.com/identity/v2/oauth2/token](https://openapi.investec.com/identity/v2/oauth2/token) as the request URL.\n2. The endpoint receives your client ID and client secret as [BASIC](https://en.wikipedia.org/wiki/BASIC) authentication headers. Select the Authorization tab and select BASIC AUTH from the Type list.\n3. Enter your client_ID into the USERNAME field and your secret into the PASSWORD field \n4. Select the Headers tab and enter the **x-api-key** into the KEY field\n5. Enter your API key into the VALUE field\n6. Select the Body tab and select the x-www-form-urlencoded option\n7. Enter grant_type into the KEY field and client_credentials into the VALUE field.\n8. Send off your request.\n\nIf your keys are valid, the response will contain an access token and the number of seconds the access token is valid. \nSample response:\n```json\n{ \"access_token\": \"Z1CRQarGOSogNuUhRlENi5iKAGqh�, \"token_type\": \"Bearer\", \"expires_in\": 1799, \"scope\": \"accounts\" }\n```\n\n# Authentication\n1. OAuth 2.0 access tokens are used to authenticate requests. Your access token authorises you to use the Programmable Card API.\n2. To call the API, you must exchange your client ID, secret and API (x-api-key) key for an access token. \n3. You need to include the access token in the Authorisation header with the designation bearer when making calls to the API\n4. The access token returned during the authentication request is valid for 30 minutes, at which point it will expire, and you will need to request a new one by calling /identity/v2/oauth2/token again.\n\nWhen you make calls to the API, include the access token in the Authorisation header with the designation as Bearer. \n<SecurityDefinitions /> \n\n# Release Notes \n2024-11-07\n*   **Enhancement**: Added an additional pending transactions endpoint za/pb/v1/accounts/{accountid}/pending-transactions just returning the pending ones with only the properties available.\n*   **Enhancement**: Added the pending transactions to the existing transactions endpoint. Append `?includePending=true` to the querystring\n*   **Enhancement**: Added a uuid property to the transactions endpoint. `( accountId.Substring(accountId.Length - 5) + postingDate.Replace(\"-\", \"\") + postedOrder.PadLeft(7, '0') )` This will only be populated for posted transaction on Private Bank Accounts. This is not a backend banking generated ID and will change if any of the properties making it up changes.\n*   **Enhancement**: Added approved beneficiaries to the beneficiary endpoint. They can be identified by the `\"beneficiaryType\": \"INVESTECAPPROVED\"` property with another new property eg. `\"approvedBeneficiaryCategory\": \"Municipalities\"`\n\n2023-09-07\n*   **Enhancement**: Added payment initiation requiring authorisation\n\n2023-08-24\n*   **Enhancement**: Added document retreival\n*   **Enhancement**: Added more balances to the Balance endpoint\n\n2023-05-29\n*   **Enhancement**: Updated response codes returned\n\n2023-03-05\n*   **Enhancement**: Added a sandbox environment\n\n2022-11-25\n*   **Enhancement**: Included inter account transfers v2 - Transfer Multiple v2\n*   **Enhancement**: Included beneficiary payments - Pay Multiple\n*   **Enhancement**: Included beneficiaries - Get Beneficiaries\n*   **Enhancement**: Included beneficiary categories - Get Beneficiary Categories\n*   **Enhancement**: Added properties kycCompliant and profileId to accounts - Get Accounts\n*   **Enhancement**: Added property profileId to beneficiaries - Beneficiaries\n\n2022-02-21\n*   **Enhancement**: Included inter account transfers - Transfer Multiple\n\n2021-10-01\n*   **Fix**: The runningBalance on transactions shows (-) if it is a negative balance - Get Account Transactions\n\n2020-07-21\n*   **Enhancement**: Included transactionDate to - Get Account Transactions\n*   **Enhancement**: Included date range filter to - Get Account Transactions\n\n2020-09-08\n*   **Fix**: Implemented CORS support\n*   **Fix**: Implemented multi User-Agent support\n\n2020-11-10\n*   **Enhancement**: Included postedOrder to - Get Account Transactions\n*   **Enhancement**: Included transactionType to - Get Account Transactions\n\n2020-11-13\n*   **Enhancement**: Included transaction type filter to - Get Account Transactions\n",
+    "title": "Private Bank API",
+    "description": "# Overview\nThis collection of API endpoints enables you to access data and perform actions on your Investec Private Bank account, whether for **personal or business use**. With these APIs, you can:\n- Retrieve a list of your accounts\n- Check account balances\n- Get your transaction history \n- Get a list of your Investec Online Banking profiles \n- Access your list of beneficiaries\n- Make payments to beneficiaries\n- Get details on who is a listed authoriser and the authorisation period (typically for business payments)\n- Transfer funds between accounts\n- Download PDF documents such as account statements and tax certificates\n\n # Authentication\n\n <details><summary><strong> View Authentication details</strong></summary> \n\n- Investec API authentication uses **OAuth 2.0 client credentials** (`client_id` and `client_secret`), with the addition of an `x-api-key`. \n- Log in to Investec Online to get your `client_id` and `client_secret` and to generate your `x-api key` with the scopes you require.\n\n **1. Get an access token**\n\n- To get an access token, you must exchange your `client_id`, `client_secret` and `x-api key` for the token \n\n```bash\ncurl --location 'https://openapi.investec.com/identity/v2/oauth2/token' \\\n--header 'x-api-key: <<your_api_key>>' \\\n--header 'Authorization: Basic <<base64(client_id:client_secret)>>' \\\n--header 'Content-Type: application/x-www-form-urlencoded' \\\n--data-urlencode 'grant_type=client_credentials'\n```\n\n**Headers explained:**\n- `x-api-key`: API key generated on Investec Online\n- `Authorization`: Base64-encoded `client_id:client_secret`. Take your `client_id` and `client_secret` and base64 encode them to provide a value for basic authorization.\n- `Content-Type`: Indicates the request body format\n\n**2. Use the token for all API requests**\n\n- Use the access token that you receive in all subsequent API requests \n- Access tokens are **valid for 30 minutes** and must be refreshed when expired \n\n```bash\ncurl --location 'https://openapi.investec.com/...' \\\n--header 'Authorization: Bearer <<your_access_token>>'\n```\n\n **Notes**\n- Ensure your API key has the required scopes - you can set these when you create the key on Investec Online.\n\n</details>\n\n # Quickstarts\n\n<details>\n<summary><strong>View Quickstart (cURL)</strong></summary>\n\n This Quickstart walks you through making your first successful API call to the Private Bank API endpoints. By the end of this guide, you will:\n- Authenticate using OAuth 2.0 client credentials and your x-api key \n- Call the Get Accounts endpoint \n- Receive an HTTP 200 OK response with a list of your accounts linked to your Investec Private Bank profile.\n\n **Before you start** \n\nMake sure you have the following: \n- An **Investec Private Individual** or **Private Business** account or optionally use the Sandbox \n- You have enrolled for Investec Developer on Investec Online (not required if using Sandbox) \n- You have your client_id and client_secret from Investec Online and have created an API key (see [Sandbox](#Sandbox) section for sandbox keys) \n- API key scopes include at least “accounts” (not required for Sandbox) \n- An API client such as Postman, Curl or your own application code.\n\n **Choose your environment** \n\n You can make your first call in either sandbox or production. The flow is identical. The Sandbox API will return mock data, and all actions can be run multiple times. \n\n Keep in mind that the sandbox is stateless and therefore, for example, balances won’t be updated when transfers are made in the sandbox. \n\n **Sandbox**\n\n Use this for development and testing.\n\n**Base API URL**: https://openapisandbox.investec.com \n\n**Production**\n\n Use this when you are ready to connect to your live account data.\n\n **Base API URL**:https://openapi.investec.com \n\n **Step 1: Get an access token** \n\n All Private Bank APIs use OAuth 2.0 with the client credentials grant type.\n\n The client_id and client_secret are combined and Base64 encoded to create the value used in the Authorization header as Basic {base64_value}.\n\n You must include:\n- HTTP Basic Auth (client_id:client_secret) \n- Your x-api key \n\n **Token request** \n\n```bash\ncurl --location 'https://openapisandbox.investec.com/identity/v2/oauth2/token' \\\n--header 'x-api-key: <<your api_key>>' \\\n--header 'Accept: application/json' \\\n--header 'Content-Type: application/x-www-form-urlencoded' \\\n--header 'Authorization: Basic <<client_id:client_secret>>' \\\n--data-urlencode 'grant_type=client_credentials'\n```\n\n **What this does**\n\n- Authenticates your application \n- Returns a short-lived access token called a bearer token (valid for 30 minutes) \n- Confirms your credentials and API key are valid \n\n **Successful response example** \n\n```json\n{\n  \"access_token\": \"qwertyuiop123456789\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 1799,\n  \"scope\": \"accounts\"\n}\n```\n\n **Step 2: Get your accounts** \n\n Now that you have a token, you can call the Private Bank API accounts endpoint. \n\n**Sandbox** \n\nhttps://openapisandbox.investec.com/za/pb/v1/accounts \n\n **Production**\n\nhttps://openapi.investec.com/za/pb/v1/accounts\n\n **Request example** \n\n \n\n```bash\ncurl --location 'https://openapisandbox.investec.com/za/pb/v1/accounts' \\\n  --header 'Accept: application/json' \\\n  --header 'Authorization: Bearer <<your access token>>'\n```\n\n **What a successful call looks like (HTTP 200 OK)** \n\n If everything is set up correctly, you will receive HTTP 200 OK and a JSON response containing your accounts.\n\n**Successful response example**\n\n\n\n```json\n{\n  \"data\": {\n    \"accounts\": [\n      {\n        \"accountId\": \"123456789\",\n        \"accountNumber\": \"1234567890\",\n        \"accountName\": \"Primary Private Bank Account\",\n        \"referenceName\": \"Main Account\",\n        \"productName\": \"Private Bank Cheque\",\n        \"kycCompliant\": true,\n        \"profileId\": \"ABCDEF\"\n      }\n    ]\n  },\n  \"links\": {\n    \"self\": \"https://openapisandbox.investec.com/za/pb/v1/accounts\"\n  },\n  \"meta\": {\n    \"totalPages\": 1\n  }\n}\n```\n\nThis confirms that your authentication flow is working, your API key has the correct scopes, and you can successfully access Private Bank account data.\n\n **Step 3: How to debug your first call** \n\n **Common issues on a first call**\n\n| Issue | Guidance |\n|-------|----------|\n| Token request fails | Ensure you are using HTTP Basic Auth and that the x-api-key is included |\n| 401 response | Check that your credentials are correct |\n| 403 response | Confirm your API key includes the `accounts` scope |\n\n</details>\n\n\n<details>\n<summary><strong>View Quickstart (Postman)</strong></summary>\n\n [Open the collection in Postman](https://www.postman.com/investec-open-api/workspace/programmable-banking/collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=share&creator=26868804)  \n [Run in Postman](https://god.gw.postman.com/run-collection/26868804-00260d55-0009-42ee-b148-d439992e64ff?action=collection%2Ffork&collection-url=entityId%3D26868804-00260d55-0009-42ee-b148-d439992e64ff%26entityType%3Dcollection%26workspaceId%3D905c2bab-81a1-4297-8b70-2456c776a7a0)\n\n The instructions below will guide you through the process of authenticating and getting your accounts in Postman. Before you start, **fork** the appropriate collection, and work on the fork now available in My Workspace. \n\n **1. Authenticate** \n\n 1. Head over to the **Variables** tab to set your environment variables \n2. Insert your client ID, client secret, and x-api key. \n\n3. Navigate to the Auth folder, and the POST Authentication query (URL: https://openapi.investec.com/identity/v2/oauth2/token). \n\n- Under **Authorization**: The Auth type is set to Basic Auth \n- Under **Headers**: Your headers include the x-api-key header which uses the key you just filled in. \n- Under **Body**: In the request body, the grant-type field has the value client_credentials \n 4. Hit send on the request.  \n\n In response to your client id, secret and x-api-key, the endpoint will respond with a secure token, called a bearer token, and the period for which the token is valid (30 minutes).\n\n Navigate back to the Variables table and **paste your token into the token field**. \n\n **2. Get your accounts**\n\n1. Navigate to the Accounts folder and the GET Accounts query\n2. Hit Send to make a call to the Account Information API endpoint (no additional parameters need to be set).\n\n The JSON response will include all your accounts, and each account has a unique ID (accountId) that you will use when transacting against it.\n\n</details>\n\n\n # Sandbox\n\n<details>\n<summary><strong>Sandbox access</strong></summary>\n\n **Base API URL**: https://openapisandbox.investec.com \n- To authenticate in the Sandbox environment, you are provided with a **client_id**, **client_secret**, and **x-api-key**.  \n- The client_id and client_secret are combined and **Base64 encoded** to create the value used in the Authorization header as Basic {base64_value} — this encoded value is provided below for you. \n- The x-api-key is sent as a separate header, and the request will return an **access_token**. \n- The sandbox has the following scopes: \n  - accounts - Account information\n  - balances - Account balance information \n  -  transactions - Transaction history \n  - transfers - Inter account transfer \n  - beneficiarypayments - Beneficiary payments \n  - documents - pdf statements and tax certificates.\n- Follow the [Quickstart](#Quickstart(cURL)) instructions to get going using the Sandbox \n\n **Sandbox credentials**\n\n| Field | Value |\n|-------|--------|\n| client_id | `yAxzQRFX97vOcyQAwluEU6H6ePxMA5eY` |\n| client_secret | `4dY0PjEYqoBrZ99r` |\n| x-api-key | `eUF4elFSRlg5N3ZPY3lRQXdsdUVVNkg2ZVB4TUE1ZVk6YVc1MlpYTjBaV010ZW1FdGNHSXRZV05qYjNWdWRITXRjMkZ1WkdKdmVBPT0=`|\n| Authorization | Basic `eUF4elFSRlg5N3ZPY3lRQXdsdUVVNkg2ZVB4TUE1ZVk6NGRZMFBqRVlxb0JyWjk5cg==`|\n # Release notes \n\n\n\n<details>\n<summary><strong>Description of API changes</strong></summary> \n\n 2026-05-06\n- **Deprecation**: Removed the Transfer Multiple V1 endpoint from the documentation.\n\n 2024-11-07\n- **Enhancement**: Added an additional pending transactions endpoint `/za/pb/v1/accounts/{accountId}/pending-transactions` \n- **Enhancement**: Added support for `?includePending=true`\n- **Enhancement**: Added a uuid property to the transactions endpoint\n- **Enhancement**: Added approved beneficiaries with `\"beneficiaryType\": \"INVESTECAPPROVED\"`\n\n 2023-09-07\n- **Enhancement**: Added payment initiation requiring authorisation\n\n 2023-08-24\n- **Enhancement**: Added document retrieval\n- **Enhancement**: Added more balances to the Balance endpoint\n\n 2023-05-29\n- **Enhancement**: Updated response codes returned\n\n 2023-03-05\n- **Enhancement**: Added a sandbox environment\n\n 2022-11-25\n- **Enhancement**: Included inter account transfers v2\n- **Enhancement**: Included beneficiary payments\n- **Enhancement**: Included beneficiaries\n- **Enhancement**: Included beneficiary categories\n\n 2022-02-21\n- **Enhancement**: Included inter account transfers\n\n 2021-10-01\n- **Fix**: Running balance displays correctly for negative values\n\n 2020-11-13\n- **Enhancement**: Added transaction type filter\n\n 2020-11-10\n- **Enhancement**: Added postedOrder and transactionType\n\n 2020-09-08\n- **Fix**: Implemented CORS and multi User-Agent support\n\n 2020-07-21\n- **Enhancement**: Added transactionDate and date range filtering \n\n\n</details>\n",
     "termsOfService": "https://developer.investec.com/za/terms-of-use",
     "contact": {
-      "name": "Investec API"
-    },
-    "license": {
-      "name": "Investec API",
-      "url": "https://developer.investec.com/za/terms-of-use"
+      "name": "Investec Developer Support",
+      "email": "developer@investec.com"
     }
   },
   "tags": [
     {
       "name": "Account information",
-      "description": "Get data in context of an account. This includes balances and transaction history"
+      "description": "Get account-related data, including current balances, transaction history, pending transactions, and associated beneficiaries."
     },
     {
       "name": "Inter account transfers",
@@ -36,36 +31,35 @@
     },
     {
       "name": "Beneficiaries and Beneficiary payments",
-      "description": "Pay funds to one or multiple beneficiaries. This includes payments requiring authorisation."
+      "description": "Make a payment to one or more beneficiaries. This includes payments requiring authorisation."
     },
     {
       "name": "Documents",
-      "description": "List and retrieve documents."
+      "description": "Get a list of documents and retrieve specified documents."
     }
   ],
   "paths": {
     "/za/pb/v1/accounts": {
       "get": {
         "summary": "Get Accounts",
-        "description": "Get a list of accounts with metadata regarding the account like Account name, Account type  and the profile it is associated to",
+        "description": "Get a list of accounts along with associated metadata, including account name, account type, and linked Investec Online Banking profiles.",
         "operationId": "accounts",
         "tags": [
           "Account information"
         ],
-        "parameters": [],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "accounts"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "accounts"
             ]
           }
         ],
-        "x-code-samples": [
+        "x-codeSamples": [
           {
             "lang": "Curl",
             "label": "cURL",
@@ -83,110 +77,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "accounts": {
-                          "type": "array",
-                          "items": {
-                            "required": [
-                              "accountId",
-                              "accountNumber",
-                              "accountName",
-                              "referenceName",
-                              "productName",
-                              "kycCompliant",
-                              "profileId",
-                              "profileName"
-                            ],
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                              "accountId": {
-                                "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "accountNumber": {
-                                "description": "A unique and immutable identifier used to identify the account resource. This identifier is what is commonly known to the owner.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "accountName": {
-                                "description": "The nickname of the account, a means of identification of the account.",
-                                "maxLength": 70,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "referenceName": {
-                                "description": "The nickname of the account, assigned by the account owner in order to provide an additional means of identification of the account.",
-                                "maxLength": 70,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "productName": {
-                                "description": "Identifies the product of the account.",
-                                "maxLength": 70,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "kycCompliant": {
-                                "description": "Identifies if the account is KYC compliant.",
-                                "type": "boolean"
-                              },
-                              "profileId": {
-                                "description": "A unique and immutable identifier used to identify the account profile. This identifier has no meaning to the account owner. This is used to filter the beneficiary list",
-                                "maxLength": 70,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "profileName": {
-                                "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
-                                "maxLength": 70,
-                                "minLength": 1,
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetAccounts"
                 },
                 "example": {
                   "data": {
@@ -234,33 +125,33 @@
     "/za/pb/v1/accounts/{accountId}/balance": {
       "get": {
         "summary": "Get Account Balance",
-        "description": "Obtain a specified account's balance.",
+        "description": "Get the balance for a specified account.",
         "operationId": "balance",
         "tags": [
           "Account information"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "balances"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "balances"
             ]
           }
         ],
-        "x-code-samples": [
+        "x-codeSamples": [
           {
             "lang": "Curl",
             "label": "cURL",
-            "source": "curl --location 'https://openapisandbox.investec.com/za/pb/v1/accounts{accountId}/balance'  --header 'Authorization: Bearer {yourBearerToken}'"
+            "source": "curl --location 'https://openapisandbox.investec.com/za/pb/v1/accounts/{accountId}/balance'  --header 'Authorization: Bearer {yourBearerToken}'"
           },
           {
             "lang": "HTTP",
             "label": "HTTP",
-            "source": "GET /za/pb/v1/accounts/{accountId}/balance HTTP/1.1 \nHost: openapisandbox.investec.com \nAuthorization: Bearer {yourBearerToken}"
+            "source": "GET /za/pb/v1/accounts/{accountId}/balance HTTP/1.1 \n Host: openapisandbox.investec.com \nAuthorization: Bearer {yourBearerToken}"
           }
         ],
         "parameters": [
@@ -281,91 +172,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "description": "Set of elements used to define the balance details.",
-                      "required": [
-                        "accountId",
-                        "currentBalance",
-                        "availableBalance",
-                        "budgetBalance",
-                        "straightBalance",
-                        "cashBalance",
-                        "currency"
-                      ],
-                      "additionalProperties": false,
-                      "properties": {
-                        "accountId": {
-                          "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-                          "maxLength": 40,
-                          "minLength": 1,
-                          "type": "string"
-                        },
-                        "currentBalance": {
-                          "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                          "format": "double",
-                          "type": "number"
-                        },
-                        "availableBalance": {
-                          "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                          "format": "double",
-                          "type": "number"
-                        },
-                        "budgetBalance": {
-                          "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                          "format": "double",
-                          "type": "number"
-                        },
-                        "straightBalance": {
-                          "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                          "format": "double",
-                          "type": "number"
-                        },
-                        "cashBalance": {
-                          "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                          "format": "double",
-                          "type": "number"
-                        },
-                        "currency": {
-                          "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme, as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
-                          "pattern": "^[A-Z]{3,3}$",
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetAccountBalance"
                 },
                 "example": {
                   "data": {
@@ -408,19 +215,19 @@
     "/za/pb/v1/accounts/{accountId}/transactions": {
       "get": {
         "summary": "Get Account Transactions",
-        "description": "Obtain a specified account's transactions.",
+        "description": "Get the transactions for a specified account.",
         "tags": [
           "Account information"
         ],
         "operationId": "accountsTransactions",
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "transactions"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "transactions"
             ]
           }
@@ -484,134 +291,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "transactions": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                              "accountId": {
-                                "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "CREDIT",
-                                  "DEBIT"
-                                ],
-                                "type": "string"
-                              },
-                              "transactionType": {
-                                "description": "Refers to the transaction type filter's value.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "status": {
-                                "enum": [
-                                  "POSTED",
-                                  "PENDING"
-                                ],
-                                "type": "string"
-                              },
-                              "description": {
-                                "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "cardNumber": {
-                                "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable.",
-                                "maxLength": 40,
-                                "minLength": 0,
-                                "type": "string"
-                              },
-                              "postedOrder": {
-                                "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable.",
-                                "type": "number"
-                              },
-                              "postingDate": {
-                                "format": "date-time",
-                                "description": "Date and time when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                                "maxLength": 10,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "valueDate": {
-                                "format": "date-time",
-                                "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                                "maxLength": 10,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "actionDate": {
-                                "format": "date-time",
-                                "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                                "maxLength": 10,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "transactionDate": {
-                                "format": "date-time",
-                                "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                                "maxLength": 10,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "amount": {
-                                "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                                "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                                "type": "number"
-                              },
-                              "runningBalance": {
-                                "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                                "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                                "type": "number"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetTransactions"
                 },
                 "example": {
                   "data": {
@@ -681,19 +361,19 @@
     "/za/pb/v1/accounts/{accountId}/pending-transactions": {
       "get": {
         "summary": "Get Account Pending Transactions",
-        "description": "Obtain a specified account's pending transactions.",
+        "description": "Get the pending transactions for a specified account.",
         "tags": [
           "Account information"
         ],
         "operationId": "accountsPendingTransactions",
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "transactions"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "transactions"
             ]
           }
@@ -716,92 +396,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "PendingTransaction": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                              "accountId": {
-                                "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "type": {
-                                "enum": [
-                                  "CREDIT",
-                                  "DEBIT"
-                                ],
-                                "type": "string"
-                              },
-                              "status": {
-                                "enum": [
-                                  "POSTED",
-                                  "PENDING"
-                                ],
-                                "type": "string"
-                              },
-                              "description": {
-                                "description": "Unique identifier for the transaction within an servicing institution. This identifier is both unique and immutable.",
-                                "maxLength": 40,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "transactionDate": {
-                                "format": "date-time",
-                                "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                                "maxLength": 10,
-                                "minLength": 1,
-                                "type": "string"
-                              },
-                              "amount": {
-                                "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                                "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                                "type": "number"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetPendingTransactions"
                 },
                 "example": {
                   "data": {
@@ -844,234 +439,9 @@
         }
       }
     },
-    "/za/pb/v1/accounts/transfermultiple": {
-      "post": {
-        "summary": "Transfer Multiple (TO BE DEPRECATED)",
-        "description": "Transfer funds to one or multiple accounts.",
-        "tags": [
-          "Inter account transfers"
-        ],
-        "operationId": "transfer",
-        "security": [
-          {
-            "Oauth2": [
-              "transfers"
-            ]
-          },
-          {
-            "Oauth2-Sandbox": [
-              "transfers"
-            ]
-          }
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Content-Type",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "application/json"
-          }
-        ],
-        "deprecated": true,
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "accountId"
-                ],
-                "additionalProperties": false,
-                "properties": {
-                  "accountId": {
-                    "type": "string",
-                    "example": "XXXXXX"
-                  },
-                  "transferList": {
-                    "type": "array",
-                    "items": {
-                      "required": [
-                        "beneficiaryAccountId",
-                        "amount",
-                        "myReference",
-                        "theirReference"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "beneficiaryAccountId": {
-                          "type": "string"
-                        },
-                        "amount": {
-                          "type": "string"
-                        },
-                        "myReference": {
-                          "type": "string"
-                        },
-                        "theirReference": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "accountId": "XXXXXX",
-                "transferList": [
-                  {
-                    "beneficiaryAccountId": "XXXXXXXXXX",
-                    "amount": "10.12",
-                    "myReference": "Trans from PBA to PS",
-                    "theirReference": "Trans from PBA to PS"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Resource has been retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "object",
-                      "description": "Set of elements used to define the transfer status details.",
-                      "additionalProperties": false,
-                      "properties": {
-                        "transferResponse": {
-                          "type": "object",
-                          "additionalProperties": false,
-                          "properties": {
-                            "TransferResponses": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "additionalProperties": false,
-                                "properties": {
-                                  "PaymentReferenceNumber": {
-                                    "description": "Internal transfer reference number",
-                                    "type": "string"
-                                  },
-                                  "PaymentDate": {
-                                    "description": "Transfer date",
-                                    "type": "string"
-                                  },
-                                  "Status": {
-                                    "description": "Transfer outcome status",
-                                    "type": "string"
-                                  },
-                                  "BeneficiaryName": {
-                                    "description": "Transfer reference used",
-                                    "type": "string"
-                                  },
-                                  "BeneficiaryAccountId": {
-                                    "description": "Account ID of the destination account",
-                                    "type": "string"
-                                  },
-                                  "AuthorisationRequired": {
-                                    "description": "Boolean value describing if authorisation is required",
-                                    "type": "boolean"
-                                  }
-                                }
-                              }
-                            },
-                            "ErrorMessage": {
-                              "description": "",
-                              "type": "string",
-                              "nullable": true
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "data": {
-                    "transferResponse": {
-                      "TransferResponses": [
-                        {
-                          "PaymentReferenceNumber": "UBP0012345678",
-                          "PaymentDate": "06/04/2022",
-                          "Status": "- No authorisation necessary <BR>- Payment/Transfer effective date 06/04/2022",
-                          "BeneficiaryName": "API transfer",
-                          "BeneficiaryAccountId": "XXXXXXXXXX",
-                          "AuthorisationRequired": false
-                        }
-                      ],
-                      "ErrorMessage": null
-                    }
-                  },
-                  "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/accounts/transfermultiple"
-                  },
-                  "meta": {
-                    "totalPages": 1
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - The requested operation will not be carried out"
-          },
-          "401": {
-            "description": "Unauthorized - The requested operation was refused access"
-          },
-          "403": {
-            "description": "Forbidden - Not permitted to make this request"
-          },
-          "429": {
-            "description": "Too Many Requests - To many requests in quick succession, Retry the request."
-          },
-          "500": {
-            "description": "Internal Server Error - The requested operation failed to execute"
-          }
-        }
-      }
-    },
     "/za/pb/v1/accounts/{accountId}/transfermultiple": {
       "post": {
-        "summary": "Transfer Multiple v2",
+        "summary": "Transfer Multiple",
         "description": "Transfer funds to one or multiple accounts.",
         "tags": [
           "Inter account transfers"
@@ -1079,12 +449,12 @@
         "operationId": "transferv2",
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "transfers"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "transfers"
             ]
           }
@@ -1168,84 +538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the transfer status details.",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "TransferResponses": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                              "PaymentReferenceNumber": {
-                                "description": "Internal transfer reference number",
-                                "type": "string"
-                              },
-                              "PaymentDate": {
-                                "description": "Transfer date",
-                                "type": "string"
-                              },
-                              "Status": {
-                                "description": "Transfer outcome status",
-                                "type": "string"
-                              },
-                              "BeneficiaryName": {
-                                "description": "Transfer reference used",
-                                "type": "string"
-                              },
-                              "BeneficiaryAccountId": {
-                                "description": "Account ID of the destination account",
-                                "type": "string"
-                              },
-                              "AuthorisationRequired": {
-                                "description": "Boolean value describing if authorisation is required",
-                                "type": "boolean"
-                              }
-                            }
-                          }
-                        },
-                        "ErrorMessage": {
-                          "description": "",
-                          "type": "string",
-                          "nullable": true
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/Transfer2"
                 },
                 "example": {
                   "data": {
@@ -1292,19 +585,19 @@
     "/za/pb/v1/accounts/{accountId}/paymultiple": {
       "post": {
         "summary": "Pay Multiple",
-        "description": "Pay funds to one or multiple beneficiaries. \n\n- Size limit of 50 payments per request.",
+        "description": "Make a payment to one or more beneficiaries. \n\n- Size limit of 50 payments per request.",
         "tags": [
           "Beneficiaries and Beneficiary payments"
         ],
         "operationId": "payBeneficiary",
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "beneficiarypayments"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "beneficiarypayments"
             ]
           }
@@ -1362,19 +655,19 @@
                           "type": "string"
                         },
                         "authoriserAId": {
-                          "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+                          "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
                           "type": "string"
                         },
                         "authoriserBId": {
-                          "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+                          "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
                           "type": "string"
                         },
                         "authPeriodId": {
-                          "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+                          "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
                           "type": "string"
                         },
                         "fasterPayment": {
-                          "description": "If the payment requires authorisation this can be set to true if the beneficiary allows it from profiles/{profileid}/beneficiaries/{accountid}.",
+                          "description": "If the payment requires authorisation this can be set to true if the beneficiary allows it from profiles/{profileId}/beneficiaries/{accountId}.",
                           "type": "boolean"
                         }
                       }
@@ -1401,84 +694,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the transfer status details.",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "TransferResponses": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "additionalProperties": false,
-                            "properties": {
-                              "PaymentReferenceNumber": {
-                                "description": "Internal transfer reference number",
-                                "type": "string"
-                              },
-                              "PaymentDate": {
-                                "description": "Transfer date",
-                                "type": "string"
-                              },
-                              "Status": {
-                                "description": "Transfer outcome status",
-                                "type": "string"
-                              },
-                              "BeneficiaryName": {
-                                "description": "Transfer reference used",
-                                "type": "string"
-                              },
-                              "BeneficiaryAccountId": {
-                                "description": "Account ID of the destination account",
-                                "type": "string"
-                              },
-                              "AuthorisationRequired": {
-                                "description": "Boolean value describing if authorisation is required",
-                                "type": "boolean"
-                              }
-                            }
-                          }
-                        },
-                        "ErrorMessage": {
-                          "description": "",
-                          "type": "string",
-                          "nullable": true
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/Payment"
                 },
                 "example": {
                   "data": {
@@ -1525,25 +741,25 @@
     "/za/pb/v1/accounts/beneficiaries": {
       "get": {
         "summary": "Get Beneficiaries",
-        "description": "List of beneficiaries linked to the profile",
+        "description": "Get a list of beneficiaries linked to a specified Investec Online Banking profile",
         "tags": [
           "Beneficiaries and Beneficiary payments"
         ],
         "operationId": "beneficiaries",
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "beneficiarypayments"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "beneficiarypayments"
             ]
           }
         ],
         "parameters": [],
-        "x-code-samples": [
+        "x-codeSamples": [
           {
             "lang": "Curl",
             "label": "cURL",
@@ -1561,109 +777,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "description": "Set of elements used to define the beneficiaries details.",
-                      "items": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "properties": {
-                          "beneficiaryId": {
-                            "description": "A unique and immutable identifier used to identify the beneficiary resource. This identifier has no meaning to the account owner.",
-                            "type": "string"
-                          },
-                          "accountNumber": {
-                            "description": "The beneficiary bank account number.",
-                            "type": "string"
-                          },
-                          "code": {
-                            "description": "The beneficiary bank code.",
-                            "type": "string"
-                          },
-                          "bank": {
-                            "description": "The beneficiary bank name.",
-                            "type": "string"
-                          },
-                          "beneficiaryName": {
-                            "description": "Beneficiary name.",
-                            "type": "string"
-                          },
-                          "lastPaymentAmount": {
-                            "description": "Last payment amount made to the beneficiary.",
-                            "type": "string"
-                          },
-                          "lastPaymentDate": {
-                            "description": "Last payment date to the beneficiary.",
-                            "type": "string"
-                          },
-                          "cellNo": {
-                            "description": "Notification cell no.",
-                            "type": "string"
-                          },
-                          "emailAddress": {
-                            "description": "Notification email address.",
-                            "type": "string"
-                          },
-                          "name": {
-                            "description": "Beneficiary name.",
-                            "type": "string"
-                          },
-                          "referenceAccountNumber": {
-                            "description": "Reference account number.",
-                            "type": "string"
-                          },
-                          "referenceName": {
-                            "description": "Reference name.",
-                            "type": "string"
-                          },
-                          "categoryId": {
-                            "description": "Beneficiary category id.",
-                            "type": "string"
-                          },
-                          "profileId": {
-                            "description": "Profile id.",
-                            "type": "string"
-                          },
-                          "fasterPaymentAllowed": {
-                            "description": "Faster Payment Allowed.",
-                            "type": "boolean"
-                          }
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetBeneficiaries"
                 },
                 "example": {
                   "data": [
@@ -1686,7 +800,7 @@
                     }
                   ],
                   "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/profiles/10163189587443/accounts/3353431574710163189587446/beneficiaries"
+                    "self": "https://openapi.investec.com/za/pb/v1/accounts/beneficiaries"
                   },
                   "meta": {
                     "totalPages": 1
@@ -1723,12 +837,12 @@
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "beneficiarypayments"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "beneficiarypayments"
             ]
           }
@@ -1740,58 +854,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the beneficiaries category details.",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "id": {
-                          "description": "A unique and immutable identifier used to identify the beneficiary category resource. This identifier has no meaning to the account owner.",
-                          "type": "string"
-                        },
-                        "isDefault": {
-                          "description": "A flag identifying the default category.",
-                          "type": "string"
-                        },
-                        "name": {
-                          "description": "The beneficiary category name.",
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/Beneficiarycategories"
                 },
                 "example": {
                   "data": {
@@ -1830,19 +893,19 @@
     "/za/pb/v1/profiles": {
       "get": {
         "summary": "Get Profiles",
-        "description": "List all the profiles consented to.",
+        "description": "Get a list of all the Investec Online Banking profiles for which you have consent.",
         "operationId": "profiles",
         "tags": [
           "Account information"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "accounts"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "accounts"
             ]
           }
@@ -1854,56 +917,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the profiles.",
-                      "type": "array",
-                      "properties": {
-                        "profileId": {
-                          "description": "A unique and immutable identifier used to identify the profile resource. This identifier has no meaning to the account owner.",
-                          "type": "string"
-                        },
-                        "profileName": {
-                          "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
-                          "type": "string"
-                        },
-                        "defaultProfile": {
-                          "description": "Value describing if the profile is the default for the user.",
-                          "type": "boolean"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetProfiles"
                 },
                 "example": {
                   "data": [
@@ -1941,22 +955,22 @@
         }
       }
     },
-    "/za/pb/v1/profiles/{profileid}/accounts": {
+    "/za/pb/v1/profiles/{profileId}/accounts": {
       "get": {
         "summary": "Get Profile Accounts",
-        "description": "List all the accounts for the profile specified.",
+        "description": "Get all the accounts for a specified Investec Online Banking profile.",
         "operationId": "profileaccounts",
         "tags": [
           "Account information"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "accounts"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "accounts"
             ]
           }
@@ -1964,7 +978,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "profileid",
+            "name": "profileId",
             "required": true,
             "schema": {
               "type": "string"
@@ -1978,104 +992,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "required": [
-                          "accountId",
-                          "accountNumber",
-                          "accountName",
-                          "referenceName",
-                          "productName",
-                          "kycCompliant",
-                          "profileId",
-                          "profileName"
-                        ],
-                        "type": "object",
-                        "additionalProperties": false,
-                        "properties": {
-                          "accountId": {
-                            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
-                            "maxLength": 40,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "accountNumber": {
-                            "description": "A unique and immutable identifier used to identify the account resource. This identifier is what is commonly known to the owner.",
-                            "maxLength": 40,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "accountName": {
-                            "description": "The nickname of the account, a means of identification of the account.",
-                            "maxLength": 70,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "referenceName": {
-                            "description": "The nickname of the account, assigned by the account owner in order to provide an additional means of identification of the account.",
-                            "maxLength": 70,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "productName": {
-                            "description": "Identifies the product of the account.",
-                            "maxLength": 70,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "kycCompliant": {
-                            "description": "Identifies if the account is KYC compliant.",
-                            "type": "boolean"
-                          },
-                          "profileId": {
-                            "description": "A unique and immutable identifier used to identify the account profile. This identifier has no meaning to the account owner. This is used to filter the beneficiary list",
-                            "maxLength": 70,
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "profileName": {
-                            "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
-                            "maxLength": 70,
-                            "minLength": 1,
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetProfileAccounts"
                 },
                 "example": {
                   "data": [
@@ -2091,7 +1008,7 @@
                     }
                   ],
                   "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileid}/accounts"
+                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileId}/accounts"
                   },
                   "meta": {
                     "totalPages": 1
@@ -2118,22 +1035,22 @@
         }
       }
     },
-    "/za/pb/v1/profiles/{profileid}/accounts/{accountid}/authorisationsetupdetails": {
+    "/za/pb/v1/profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails": {
       "get": {
         "summary": "Get Authorisation Setup Details",
-        "description": "List the authorisation setup details for the specified profile and accounts.",
+        "description": "Get the authorisation setup details for a specified Investec Online Banking profile and account. This includes the number of authorisers, name of the authorisers, and the allowable authorisation time period.\n\n This is typically used by Private Business users when making payments.",
         "operationId": "authorisationsetupdetails",
         "tags": [
           "Account information"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "accounts"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "accounts"
             ]
           }
@@ -2141,7 +1058,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "profileid",
+            "name": "profileId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2150,7 +1067,7 @@
           },
           {
             "in": "path",
-            "name": "accountid",
+            "name": "accountId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2164,90 +1081,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the authorisation setup details for the profile and account combination.",
-                      "type": "object",
-                      "properties": {
-                        "numberOfAuthorisationRequired": {
-                          "description": "The number of authorisors needed for a payment.",
-                          "type": "string"
-                        },
-                        "period": {
-                          "description": "",
-                          "type": "array",
-                          "properties": {
-                            "id": {
-                              "description": "Period ID.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "description": "Period description for the amount of days the payment will be valid for until it expires if not approved.",
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "authorisersListA": {
-                          "description": "",
-                          "type": "array",
-                          "properties": {
-                            "id": {
-                              "description": "Authoriser A ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 1.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "description": "Authoriser A name.",
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "authorisersListB": {
-                          "description": "",
-                          "type": "array",
-                          "properties": {
-                            "id": {
-                              "description": "Authoriser B ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 2.",
-                              "type": "string"
-                            },
-                            "name": {
-                              "description": "Authoriser B name.",
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetAuthsetup"
                 },
                 "example": {
                   "data": {
@@ -2328,7 +1162,7 @@
                     ]
                   },
                   "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails"
+                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails"
                   },
                   "meta": {
                     "totalPages": 1
@@ -2355,22 +1189,22 @@
         }
       }
     },
-    "/za/pb/v1/profiles/{profileid}/accounts/{accountid}/beneficiaries": {
+    "/za/pb/v1/profiles/{profileId}/accounts/{accountId}/beneficiaries": {
       "get": {
         "summary": "Get Profile Beneficiaries",
-        "description": "List all the beneficiaries available for the profile and account specified.",
-        "operationId": "profilebenefiaries",
+        "description": "Get all the beneficiaries available for a specified Investec Online Banking profile and account.",
+        "operationId": "profilebeneficiaries",
         "tags": [
           "Account information"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "accounts"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "accounts"
             ]
           }
@@ -2378,7 +1212,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "profileid",
+            "name": "profileId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2387,7 +1221,7 @@
           },
           {
             "in": "path",
-            "name": "accountid",
+            "name": "accountId",
             "required": true,
             "schema": {
               "type": "string"
@@ -2401,109 +1235,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "additionalProperties": false,
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "description": "Set of elements used to define the beneficiaries details.",
-                      "items": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "properties": {
-                          "beneficiaryId": {
-                            "description": "A unique and immutable identifier used to identify the beneficiary resource. This identifier has no meaning to the account owner.",
-                            "type": "string"
-                          },
-                          "accountNumber": {
-                            "description": "The beneficiary bank account number.",
-                            "type": "string"
-                          },
-                          "code": {
-                            "description": "The beneficiary bank code.",
-                            "type": "string"
-                          },
-                          "bank": {
-                            "description": "The beneficiary bank name.",
-                            "type": "string"
-                          },
-                          "beneficiaryName": {
-                            "description": "Beneficiary name.",
-                            "type": "string"
-                          },
-                          "lastPaymentAmount": {
-                            "description": "Last payment amount made to the beneficiary.",
-                            "type": "string"
-                          },
-                          "lastPaymentDate": {
-                            "description": "Last payment date to the beneficiary.",
-                            "type": "string"
-                          },
-                          "cellNo": {
-                            "description": "Notification cell no.",
-                            "type": "string"
-                          },
-                          "emailAddress": {
-                            "description": "Notification email address.",
-                            "type": "string"
-                          },
-                          "name": {
-                            "description": "Beneficiary name.",
-                            "type": "string"
-                          },
-                          "referenceAccountNumber": {
-                            "description": "Reference account number.",
-                            "type": "string"
-                          },
-                          "referenceName": {
-                            "description": "Reference name.",
-                            "type": "string"
-                          },
-                          "categoryId": {
-                            "description": "Beneficiary category id.",
-                            "type": "string"
-                          },
-                          "profileId": {
-                            "description": "Profile id.",
-                            "type": "string"
-                          },
-                          "fasterPaymentAllowed": {
-                            "description": "Faster Payment Allowed.",
-                            "type": "boolean"
-                          }
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetBeneficiaries"
                 },
                 "example": {
                   "data": [
@@ -2526,7 +1258,7 @@
                     }
                   ],
                   "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileid}/accounts/{accountid}/beneficiaries"
+                    "self": "https://openapi.investec.com/za/pb/v1/profiles/{profileId}/accounts/{accountId}/beneficiaries"
                   },
                   "meta": {
                     "totalPages": 1
@@ -2556,20 +1288,20 @@
     "/za/pb/v1/accounts/{accountId}/documents": {
       "get": {
         "summary": "Get Documents",
-        "description": "List all the documents available.",
+        "description": "Get a list of all the documents available for a specified account.",
         "operationId": "documents",
         "tags": [
           "Documents"
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "documents.statements",
               "documents.taxcertificates"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "documents.statements",
               "documents.taxcertificates"
             ]
@@ -2579,7 +1311,7 @@
           {
             "in": "path",
             "name": "accountId",
-            "description": "AccountId Id",
+            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2614,52 +1346,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "required": [
-                    "data",
-                    "links",
-                    "meta"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Set of elements used to define the documents.",
-                      "type": "array",
-                      "properties": {
-                        "documentType": {
-                          "description": "The type of documents available.",
-                          "type": "string"
-                        },
-                        "documentDate": {
-                          "description": "The date of the documents.",
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "meta": {
-                      "description": "Meta Data relevant to the payload",
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "totalPages": {
-                          "format": "int32",
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "links": {
-                      "description": "Links relevant to the payload",
-                      "required": [
-                        "self"
-                      ],
-                      "type": "object",
-                      "additionalProperties": false,
-                      "properties": {
-                        "self": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/GetDocuments"
                 },
                 "example": {
                   "data": [
@@ -2710,13 +1397,13 @@
         ],
         "security": [
           {
-            "Oauth2": [
+            "OAuth2": [
               "documents.statements",
               "documents.taxcertificates"
             ]
           },
           {
-            "Oauth2-Sandbox": [
+            "OAuth2Sandbox": [
               "documents.statements",
               "documents.taxcertificates"
             ]
@@ -2726,7 +1413,7 @@
           {
             "in": "path",
             "name": "accountId",
-            "description": "AccountId Id",
+            "description": "A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2747,23 +1434,19 @@
             "description": "Document Date",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Resource has been retrieved",
+            "description": "PDF document retrieved successfully",
             "content": {
-              "application/json": {
-                "example": {
-                  "data": [],
-                  "links": {
-                    "self": "https://openapi.investec.com/za/pb/v1/accounts/{accountId}/document/{documentType}/{documentDate}"
-                  },
-                  "meta": {
-                    "totalPages": 1
-                  }
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
@@ -2789,17 +1472,16 @@
   },
   "components": {
     "securitySchemes": {
-      "Oauth2": {
-        "description": "The authentication flow complies to standard Oauth2 protocol but also requires an.<br>  **x-api-key** as an additional header. <br>Also remember to include **grant_type: client_credentials** (x-www-form-urlencoded) in the body of the request",
+      "OAuth2": {
+        "description": "OAuth2.0 security scheme for production environment, with the addition of an x-api key as a header. Remember to include grant_type: client_credentials (x-www-form-urlencoded) in the body of the request.",
         "type": "oauth2",
         "flows": {
           "clientCredentials": {
             "tokenUrl": "https://openapi.investec.com/identity/v2/oauth2/token",
-            "x-api-key": "dWJHTHUxY1MzUnRjV3NzN29pWkpjNUZEbjhQaHhYUUw6N0YwRkNEQzgzQUE5MzdDQkNDMzhCMkU4ODQ2OUI1NzQ2MTQ1NTlENzgzQjRCMDhFRDBGMTY5NzQ5ODQzQjk1Qg==",
             "scopes": {
               "accounts": "Account information",
               "balances": "Account balance information",
-              "transactions ": "Transaction history",
+              "transactions": "Transaction history",
               "transfers": "Inter account transfer",
               "beneficiarypayments": "Beneficiary payments",
               "documents.statements": "Statements retrieval",
@@ -2808,8 +1490,8 @@
           }
         }
       },
-      "Oauth2-Sandbox": {
-        "description": "The authentication flow complies to standard Oauth2 protocol but also requires an.<br>  **x-api-key** as an additional header. <br>Also remember to include **grant_type: client_credentials** (x-www-form-urlencoded) in the body of the request \n## Sandbox\nThe sandbox environment allows you to test all personal Private Banking endpoints with mock data. All actions are immutable and can be run multiple times.\n\nTo use the sandbox environment simply use the base url `https://openapisandbox.investec.com` for authentication and all subsequent api requests. The basic authorization header and x-api-key are as follows ( *clientId:* `yAxzQRFX97vOcyQAwluEU6H6ePxMA5eY` *secret:* `4dY0PjEYqoBrZ99r ` ) Eg. Base64-encode ( {clientId}:{secret} )\n* **Authorization:** Bearer `eUF4elFSRlg5N3ZPY3lRQXdsdUVVNkg2ZVB4TUE1ZVk6NGRZMFBqRVlxb0JyWjk5cg==`  \n* **x-api-key:** `eUF4elFSRlg5N3ZPY3lRQXdsdUVVNkg2ZVB4TUE1ZVk6YVc1MlpYTjBaV010ZW1FdGNHSXRZV05qYjNWdWRITXRjMkZ1WkdKdmVBPT0=`",
+      "OAuth2Sandbox": {
+        "description": "OAuth2.0 security scheme for sandbox environment, with the addition of an x-api key as a header. Remember to include grant_type: client_credentials (x-www-form-urlencoded) in the body of the request.",
         "type": "oauth2",
         "flows": {
           "clientCredentials": {
@@ -2817,9 +1499,11 @@
             "scopes": {
               "accounts": "Account information",
               "balances": "Account balance information",
-              "transactions ": "Transaction history",
+              "transactions": "Transaction history",
               "transfers": "Inter account transfer",
-              "beneficiarypayments": "Beneficiary payments"
+              "beneficiarypayments": "Beneficiary payments",
+              "documents.statements": "Statements retrieval",
+              "documents.taxcertificates": "Tax certificates retrieval"
             }
           }
         }
@@ -3490,42 +2174,42 @@
                       "type": "number"
                     },
                     "postingDate": {
-                      "format": "date-time",
-                      "description": "Date and time when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                      "maxLength": 10,
-                      "minLength": 1,
+                      "format": "date",
+                      "description": "Date when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.",
                       "type": "string"
                     },
                     "valueDate": {
-                      "format": "date-time",
-                      "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                      "maxLength": 10,
-                      "minLength": 1,
+                      "format": "date",
+                      "description": "Date at which assets become available to the account owner in case of a credit entry, or ceases to be available to the account owner in case of a debit transaction entry.\r\n Usage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days",
                       "type": "string"
                     },
                     "actionDate": {
-                      "format": "date-time",
-                      "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                      "maxLength": 10,
-                      "minLength": 1,
+                      "format": "date",
+                      "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                       "type": "string"
                     },
                     "transactionDate": {
-                      "format": "date-time",
-                      "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                      "maxLength": 10,
-                      "minLength": 1,
+                      "format": "date",
+                      "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                       "type": "string"
                     },
                     "amount": {
                       "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                      "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                      "type": "number"
+                      "type": "number",
+                      "format": "double",
+                      "multipleOf": 0.01,
+                      "maximum": 9999999999999.99
                     },
                     "runningBalance": {
                       "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                      "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                      "type": "number"
+                      "type": "number",
+                      "format": "double",
+                      "multipleOf": 0.01,
+                      "maximum": 9999999999999.99
+                    },
+                    "uuid": {
+                      "description": "Unique identifier for the transaction entry.",
+                      "type": "string"
                     }
                   }
                 }
@@ -3611,42 +2295,42 @@
                   "type": "number"
                 },
                 "postingDate": {
-                  "format": "date-time",
-                  "description": "Date and time when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                  "maxLength": 10,
-                  "minLength": 1,
+                  "format": "date",
+                  "description": "Date when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.",
                   "type": "string"
                 },
                 "valueDate": {
-                  "format": "date-time",
-                  "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                  "maxLength": 10,
-                  "minLength": 1,
+                  "format": "date",
+                  "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                   "type": "string"
                 },
                 "actionDate": {
-                  "format": "date-time",
-                  "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                  "maxLength": 10,
-                  "minLength": 1,
+                  "format": "date",
+                  "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                   "type": "string"
                 },
                 "transactionDate": {
-                  "format": "date-time",
-                  "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                  "maxLength": 10,
-                  "minLength": 1,
+                  "format": "date",
+                  "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                   "type": "string"
                 },
                 "amount": {
                   "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                  "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                  "type": "number"
+                  "type": "number",
+                  "format": "double",
+                  "multipleOf": 0.01,
+                  "maximum": 9999999999999.99
                 },
                 "runningBalance": {
                   "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                  "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                  "type": "number"
+                  "type": "number",
+                  "format": "double",
+                  "multipleOf": 0.01,
+                  "maximum": 9999999999999.99
+                },
+                "uuid": {
+                  "description": "Unique identifier for the transaction entry.",
+                  "type": "string"
                 }
               }
             }
@@ -3700,42 +2384,42 @@
             "type": "number"
           },
           "postingDate": {
-            "format": "date-time",
-            "description": "Date and time when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "maxLength": 10,
-            "minLength": 1,
+            "format": "date",
+            "description": "Date when a transaction entry is posted to an account on the account servicer's books.\r\nUsage: Booking date is the expected booking date, unless the status is booked, in which case it is the actual booking date.",
             "type": "string"
           },
           "valueDate": {
-            "format": "date-time",
-            "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "maxLength": 10,
-            "minLength": 1,
+            "format": "date",
+            "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
             "type": "string"
           },
           "actionDate": {
-            "format": "date-time",
-            "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "maxLength": 10,
-            "minLength": 1,
+            "format": "date",
+            "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
             "type": "string"
           },
           "transactionDate": {
-            "format": "date-time",
-            "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "maxLength": 10,
-            "minLength": 1,
+            "format": "date",
+            "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
             "type": "string"
           },
           "amount": {
             "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-            "type": "number"
+            "type": "number",
+            "format": "double",
+            "multipleOf": 0.01,
+            "maximum": 9999999999999.99
           },
           "runningBalance": {
             "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-            "type": "number"
+            "type": "number",
+            "format": "double",
+            "multipleOf": 0.01,
+            "maximum": 9999999999999.99
+          },
+          "uuid": {
+            "description": "Unique identifier for the transaction entry.",
+            "type": "string"
           }
         }
       },
@@ -3752,7 +2436,7 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-              "PendingTransaction": {
+              "transactions": {
                 "type": "array",
                 "items": {
                   "type": "object",
@@ -3785,16 +2469,16 @@
                       "type": "string"
                     },
                     "transactionDate": {
-                      "format": "date-time",
-                      "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                      "maxLength": 10,
-                      "minLength": 1,
+                      "format": "date",
+                      "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                       "type": "string"
                     },
                     "amount": {
                       "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                      "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                      "type": "number"
+                      "type": "number",
+                      "format": "double",
+                      "multipleOf": 0.01,
+                      "maximum": 9999999999999.99
                     }
                   }
                 }
@@ -3831,7 +2515,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "PendingTransaction": {
+          "transactions": {
             "type": "array",
             "items": {
               "type": "object",
@@ -3864,16 +2548,16 @@
                   "type": "string"
                 },
                 "transactionDate": {
-                  "format": "date-time",
-                  "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-                  "maxLength": 10,
-                  "minLength": 1,
+                  "format": "date",
+                  "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
                   "type": "string"
                 },
                 "amount": {
                   "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-                  "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-                  "type": "number"
+                  "type": "number",
+                  "format": "double",
+                  "multipleOf": 0.01,
+                  "maximum": 9999999999999.99
                 }
               }
             }
@@ -3911,16 +2595,16 @@
             "type": "string"
           },
           "transactionDate": {
-            "format": "date-time",
-            "description": "Date and time at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.\r\nAll dates in the JSON payloads are represented in ISO 8601 date-time format.\r\nAll date-time fields in responses must include the timezone. An example is below:\r\n2017-04-05T10:43:07+00:00",
-            "maxLength": 10,
-            "minLength": 1,
+            "format": "date",
+            "description": "Date at which assets become available to the account owner in case of a credit entry, or cease to be available to the account owner in case of a debit transaction entry.\r\nUsage: If transaction entry status is pending and value date is present, then the value date refers to an expected/requested value date.\r\nFor transaction entries subject to availability/float and for which availability information is provided, the value date must not be used. In this case the availability component identifies the number of availability days.",
             "type": "string"
           },
           "amount": {
             "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
-            "pattern": "^\\d{1,13}\\.\\d{1,2}$",
-            "type": "number"
+            "type": "number",
+            "format": "double",
+            "multipleOf": 0.01,
+            "maximum": 9999999999999.99
           }
         }
       },
@@ -3985,19 +2669,19 @@
             "type": "string"
           },
           "authoriserAId": {
-            "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+            "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
             "type": "string"
           },
           "authoriserBId": {
-            "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+            "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
             "type": "string"
           },
           "authPeriodId": {
-            "description": "If the payment requires authorisation this is derived from profiles/{profileid}/accounts/{accountId}/authorisationsetupdetails.",
+            "description": "If the payment requires authorisation this is derived from profiles/{profileId}/accounts/{accountId}/authorisationsetupdetails.",
             "type": "string"
           },
           "fasterPayment": {
-            "description": "If the payment requires authorisation this can be set to true if the beneficiary allows it from profiles/{profileid}/beneficiaries/{accountid}.",
+            "description": "If the payment requires authorisation this can be set to true if the beneficiary allows it from profiles/{profileId}/beneficiaries/{accountId}.",
             "type": "boolean"
           }
         }
@@ -4744,18 +3428,21 @@
           "data": {
             "description": "Set of elements used to define the profiles.",
             "type": "array",
-            "properties": {
-              "profileId": {
-                "description": "A unique and immutable identifier used to identify the profile resource. This identifier has no meaning to the account owner.",
-                "type": "string"
-              },
-              "profileName": {
-                "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
-                "type": "string"
-              },
-              "defaultProfile": {
-                "description": "Value describing if the profile is the default for the user.",
-                "type": "boolean"
+            "items": {
+              "type": "object",
+              "properties": {
+                "profileId": {
+                  "description": "A unique and immutable identifier used to identify the profile resource. This identifier has no meaning to the account owner.",
+                  "type": "string"
+                },
+                "profileName": {
+                  "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
+                  "type": "string"
+                },
+                "defaultProfile": {
+                  "description": "Value describing if the profile is the default for the user.",
+                  "type": "boolean"
+                }
               }
             }
           },
@@ -4788,18 +3475,21 @@
       "Profiles": {
         "description": "Set of elements used to define the profiles.",
         "type": "array",
-        "properties": {
-          "profileId": {
-            "description": "A unique and immutable identifier used to identify the profile resource. This identifier has no meaning to the account owner.",
-            "type": "string"
-          },
-          "profileName": {
-            "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
-            "type": "string"
-          },
-          "defaultProfile": {
-            "description": "Value describing if the profile is the default for the user.",
-            "type": "boolean"
+        "items": {
+          "type": "object",
+          "properties": {
+            "profileId": {
+              "description": "A unique and immutable identifier used to identify the profile resource. This identifier has no meaning to the account owner.",
+              "type": "string"
+            },
+            "profileName": {
+              "description": "The nickname of the profile, assigned by the account owner in order to provide an additional means of identification of the profile.",
+              "type": "string"
+            },
+            "defaultProfile": {
+              "description": "Value describing if the profile is the default for the user.",
+              "type": "boolean"
+            }
           }
         }
       },
@@ -4822,42 +3512,51 @@
               "period": {
                 "description": "",
                 "type": "array",
-                "properties": {
-                  "id": {
-                    "description": "Period ID.",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "Period description for the amount of days the payment will be valid for until it expires if not approved.",
-                    "type": "string"
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "description": "Period ID.",
+                      "type": "string"
+                    },
+                    "description": {
+                      "description": "Period description for the amount of days the payment will be valid for until it expires if not approved.",
+                      "type": "string"
+                    }
                   }
                 }
               },
               "authorisersListA": {
                 "description": "",
                 "type": "array",
-                "properties": {
-                  "id": {
-                    "description": "Authoriser A ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 1.",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "Authoriser A name.",
-                    "type": "string"
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "authoriserId": {
+                      "description": "Authoriser A ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 1.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Authoriser A name.",
+                      "type": "string"
+                    }
                   }
                 }
               },
               "authorisersListB": {
                 "description": "",
                 "type": "array",
-                "properties": {
-                  "id": {
-                    "description": "Authoriser B ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 2.",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "Authoriser B name.",
-                    "type": "string"
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "authoriserId": {
+                      "description": "Authoriser B ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 2.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Authoriser B name.",
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -4900,42 +3599,51 @@
           "period": {
             "description": "",
             "type": "array",
-            "properties": {
-              "id": {
-                "description": "Period ID.",
-                "type": "string"
-              },
-              "name": {
-                "description": "Period description for the amount of days the payment will be valid for until it expires if not approved.",
-                "type": "string"
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "description": "Period ID.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Period description for the amount of days the payment will be valid for until it expires if not approved.",
+                  "type": "string"
+                }
               }
             }
           },
           "authorisersListA": {
             "description": "",
             "type": "array",
-            "properties": {
-              "id": {
-                "description": "Authoriser A ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 1.",
-                "type": "string"
-              },
-              "name": {
-                "description": "Authoriser A name.",
-                "type": "string"
+            "items": {
+              "type": "object",
+              "properties": {
+                "authoriserId": {
+                  "description": "Authoriser A ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 1.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Authoriser A name.",
+                  "type": "string"
+                }
               }
             }
           },
           "authorisersListB": {
             "description": "",
             "type": "array",
-            "properties": {
-              "id": {
-                "description": "Authoriser B ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 2.",
-                "type": "string"
-              },
-              "name": {
-                "description": "Authoriser B name.",
-                "type": "string"
+            "items": {
+              "type": "object",
+              "properties": {
+                "authoriserId": {
+                  "description": "Authoriser B ID used when doing payments requiring authorisations where numberOfAuthorisationRequired is 2.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Authoriser B name.",
+                  "type": "string"
+                }
               }
             }
           }
@@ -4952,14 +3660,18 @@
           "data": {
             "description": "Set of elements used to define the documents.",
             "type": "array",
-            "properties": {
-              "documentType": {
-                "description": "The type of documents available.",
-                "type": "string"
-              },
-              "documentDate": {
-                "description": "The date of the documents.",
-                "type": "string"
+            "items": {
+              "type": "object",
+              "properties": {
+                "documentType": {
+                  "description": "The type of documents available.",
+                  "type": "string"
+                },
+                "documentDate": {
+                  "description": "The date of the document(s).",
+                  "type": "string",
+                  "format": "date"
+                }
               }
             }
           },
@@ -4992,22 +3704,25 @@
       "Documents": {
         "description": "Set of elements used to define the documents.",
         "type": "array",
-        "properties": {
-          "documentType": {
-            "description": "The type of documents available.",
-            "type": "string"
-          },
-          "documentDate": {
-            "description": "The date of the documents.",
-            "type": "string"
+        "items": {
+          "type": "object",
+          "properties": {
+            "documentType": {
+              "description": "The type of documents available.",
+              "type": "string"
+            },
+            "documentDate": {
+              "description": "The date of the document(s).",
+              "type": "string",
+              "format": "date"
+            }
           }
         }
       }
     }
   },
-  "security": [],
   "externalDocs": {
-    "url": ".",
+    "url": "https://developer.investec.com/docs",
     "description": ""
   }
 }
